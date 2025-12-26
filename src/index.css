@@ -2,12 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* 나눔스퀘어 Regular */
+@font-face {
+  font-family: "NanumSquare";
+  font-weight: 400;
+  font-style: normal;
+  src: url("./public/fonts/NanumSquareR.ttf") format("truetype");
+}
+
+/* 나눔스퀘어 Light */
+@font-face {
+  font-family: "NanumSquare";
+  font-weight: 300;
+  font-style: normal;
+  src: url("./public/fonts/NanumSquareL.ttf") format("truetype");
+}
+
+/* 나눔스퀘어 Bold */
+@font-face {
+  font-family: "NanumSquare";
+  font-weight: 700;
+  font-style: normal;
+  src: url("./public/fonts/NanumSquareB.ttf") format("truetype");
+}
+
+/* 나눔스퀘어 Extra Bold */
+@font-face {
+  font-family: "NanumSquare";
+  font-weight: 800;
+  font-style: normal;
+  src: url("./public/fonts/NanumSquareEB.ttf") format("truetype");
 }
 
 body {
-  font-family: sans-serif; /* 기본 폰트 설정 */
+  font-family: "NanumSquare"; /* 기본 폰트 설정 */
 }
