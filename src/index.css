@@ -34,6 +34,20 @@
   src: url("./public/fonts/NanumSquareEB.ttf") format("truetype");
 }
 
+:root {
+  --primary: #3742FA;
+  --primary-foreground: #FFFFFF;
+  --secondary: #d1d1d1;
+  --secondary-foreground: #000000;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --accent: #FF5200;
+  --accent-foreground: #FFFFFF;
+  --muted: #F1F5F9;
+  --muted-foreground: #000000;
+}
+
 body {
   font-family: "NanumSquare"; /* 기본 폰트 설정 */
+  color: #2D3436;
 }
