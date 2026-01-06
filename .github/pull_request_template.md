@@ -7,14 +7,14 @@ resolved #<issue_number> : 문의나 요청사항에 대한 이슈 <br />
 
 ### 🏷️ 작업 유형 (Task Types)
 
-- [ ] ✨ **Feat**: New feature implementation
+- [ ] ✨ **Feat**: New feature
 - [ ] 🐛 **Fix**: Bug fix
-- [ ] 🎨 **Style**: Code style changes (Checkstyle, formatting)
-- [ ] 📝 **Docs**: Documentation updates (README, Swagger, etc.)
-- [ ] ♻️ **Refactor**: Code refactoring (no functional changes)
-- [ ] 🧪 **Test**: Adding or updating tests
-- [ ] ⚙️ **Setting**: Project configuration (build.gradle, yml, etc.)
-- [ ] 🚀 **Chore**: Miscellaneous or routine maintenance tasks
+- [ ] 🎨 **Style**: UI/Design
+- [ ] 📝 **Docs**: Documentation
+- [ ] ♻️ **Refactor**: Code cleanup
+- [ ] 🧪 **Test**: Add/Update tests
+- [ ] ⚙️ **Config**: Setup/Settings
+- [ ] 🚀 **Chore**: Maintenance
 
 ### 📝 작업 요약 (Summary)
 
@@ -22,9 +22,9 @@ resolved #<issue_number> : 문의나 요청사항에 대한 이슈 <br />
 
 ### ⚠️ 주요 변경 사항 (Impact & Risk)
 
-[//]: # ( **DB 변경**: 테이블/컬럼 추가, 삭제, 인덱스 변경 등 )
+[//]: # ( 컴포넌트: 신규 컴포넌트 추가 및 기존 컴포넌트 수정사항 )
 
-[//]: # ( **API 변경**: 엔드포인트 추가, 필드명 변경, 필수값 추가 등)
+[//]: # ( API 연동, 전역 상태, 커스텀 훅 변경점 )
 
 ### ✅ 셀프 체크리스트 (Self-Checklist)
 
@@ -35,9 +35,9 @@ resolved #<issue_number> : 문의나 요청사항에 대한 이슈 <br />
 
 ### 🔍 리뷰 가이드 (Review Points)
 
-[//]: # ( 리뷰어가 중점적으로 확인해야 할 로직이나 복잡한 SQL이 있다면 적어주세요.)
+[//]: # ( 리뷰어가 중점적으로 확인해야 할 사항을 적어주세요.)
 
 ### 🖼️ 검증 결과 (Evidence)
 
-[//]: # ( Swagger 응답, 실행 로그, DB 데이터 결과 또는 테스트 통과 화면을 첨부하세요. )
+[//]: # ( Screenshots / GIF )
 
