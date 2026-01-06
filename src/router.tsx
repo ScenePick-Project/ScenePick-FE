@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/home/HomePage.tsx";
 import Layout from "./components/common/Layout.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ContentDetailPage from "@pages/content/ContentDetailPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -13,6 +14,7 @@ export default function AppRouter() {
           <Route path="/movie" />
           <Route path="/drama" />
           <Route path="/ost" />
+          <Route path="/content/:id" element={<ContentDetailPage />} />
 
           {/* 없는 페이지로 갈 경우 */}
           <Route path="*" element={<NotFound />} />
