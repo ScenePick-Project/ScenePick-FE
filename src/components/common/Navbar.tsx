@@ -5,7 +5,7 @@ import { BiMoviePlay } from "react-icons/bi";
 export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-white border-b border-gray-200 z-50 flex items-center px-4">
-      <div className="flex items-center justify-between w-full max-w-screen-xl mx-auto">
+      <div className="flex items-center justify-between w-full max-w-[1600px] mx-auto">
         <h1 className="flex gap-4 items-center">
           <Link
             to="/"
