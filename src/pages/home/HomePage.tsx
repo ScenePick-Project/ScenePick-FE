@@ -1,13 +1,16 @@
 import type { SimpleTestDetail } from "../../types/simpleTest.ts";
 import type { CommonListResponse } from "../../types/common.ts";
 import { useQuery } from "@tanstack/react-query";
-import { getApi } from "../../shared/api/common_api.ts";
+import { request } from "@shared/request.ts";
 
 export default function HomaPage() {
   const simpleTestList = useQuery({
     queryKey: ["SIMPLE_TEST_LIST"],
     queryFn: () =>
-      getApi<CommonListResponse<SimpleTestDetail>>("/api/v1/simple/test/list"),
+      request<CommonListResponse<SimpleTestDetail>>({
+        method: "GET",
+        url: "/api/v1/simple/test/list",
+      }),
   });
 
   return (
