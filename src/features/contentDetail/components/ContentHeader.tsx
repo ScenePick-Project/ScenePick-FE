@@ -26,7 +26,7 @@ export const ContentHeader = ({ contentId }: ContentHeaderProps) => {
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16 items-start">
-      <div className="w-full max-w-[420px] shrink-0 group">
+      <div className="w-full max-w-[300px] shrink-0 group">
         <div className="relative aspect-[2/3] rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
           <img
             src="/src/assets/images/test.jpg"

@@ -47,16 +47,7 @@
   --muted-foreground: #000000;
 }
 
-@layer base {
-  html {
-    font-size: 25px;
-  }
-
-  body {
-    font-family: "NanumSquare", sans-serif;
-    color: #2D3436;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+body {
+  font-family: "NanumSquare";
+  color: #2D3436;
 }
