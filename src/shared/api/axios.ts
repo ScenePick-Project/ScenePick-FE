@@ -1,7 +1,19 @@
 import axios from "axios";
 
-export const api = axios.create({
-  baseURL: "http://localhost:8080", // 백엔드 주소 (Spring Boot)
-  timeout: 3000, // 3초 안에 응답 없으면 에러
-  withCredentials: true, // 나중에 쿠키(세션) 주고받을 때 필수
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:8080/api/v1",
+  timeout: 3000,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+export default api;
