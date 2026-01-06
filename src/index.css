@@ -47,7 +47,16 @@
   --muted-foreground: #000000;
 }
 
-body {
-  font-family: "NanumSquare"; /* 기본 폰트 설정 */
-  color: #2D3436;
+@layer base {
+  html {
+    font-size: 25px;
+  }
+
+  body {
+    font-family: "NanumSquare", sans-serif;
+    color: #2D3436;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
