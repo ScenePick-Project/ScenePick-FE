@@ -26,8 +26,11 @@ export default function Navbar() {
         </h1>
 
         <nav className="flex gap-4 items-center">
-          <Button asChild>
-            <Link to={"/login"}>로그인</Link>
+          {/*<Button asChild>*/}
+          {/*  <Link to={"/login"}>로그인</Link>*/}
+          {/*</Button>*/}
+          <Button variant={"ghost"} asChild>
+            <Link to={"/login"}>로그인 / 회원가입</Link>
           </Button>
         </nav>
       </div>
