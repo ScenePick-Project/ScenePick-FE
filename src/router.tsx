@@ -3,6 +3,7 @@ import HomePage from "./pages/home/HomePage.tsx";
 import Layout from "./components/common/Layout.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ContentDetailPage from "@pages/content/ContentDetailPage.tsx";
+import SignUpPage from "@pages/signup/SignUpPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -21,6 +22,7 @@ export default function AppRouter() {
         </Route>
         {/* 레이아웃이 필요 없는 페이지 */}
         <Route path="/login" />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route />
       </Routes>
     </BrowserRouter>
