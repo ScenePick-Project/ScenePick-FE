@@ -7,8 +7,8 @@ export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 export interface RequestConfig {
   method: HTTPMethod;
   url: string;
-  query?: Record<string, unknown>;
-  body?: Record<string, unknown>;
+  query?: any;
+  body?: any;
 }
 
 export const request = async <T>(config: RequestConfig): Promise<T> => {
