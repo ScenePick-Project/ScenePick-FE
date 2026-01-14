@@ -7,7 +7,7 @@ export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 export interface RequestConfig {
   method: HTTPMethod;
   url: string;
-  query?: any;
+  query?: Record<string, unknown>;
   body?: any;
 }
 
