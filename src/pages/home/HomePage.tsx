@@ -13,6 +13,8 @@ export default function HomaPage() {
       }),
   });
 
+  console.log(simpleTestList);
+
   return (
     <>
       <div>
