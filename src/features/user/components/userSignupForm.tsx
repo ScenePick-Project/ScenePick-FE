@@ -5,7 +5,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type { ObjectSchema } from "yup";
 import { Button } from "@components/ui/Button.tsx";
-import { checkIdDuplicate, signup } from "@features/user/api/userApi.ts";
+import {
+  checkEmailDuplicate,
+  checkIdDuplicate,
+  signup,
+} from "@features/user/api/userApi.ts";
 import { useNavigate } from "react-router-dom";
 
 const userSignupForm = () => {
@@ -84,7 +88,7 @@ const userSignupForm = () => {
     if (!currentEmail) return;
 
     try {
-      const isDuplicate = await checkIdDuplicate(currentEmail);
+      const isDuplicate = await checkEmailDuplicate({ email: currentEmail });
       if (isDuplicate) {
         setError("email", {
           type: "manual",
