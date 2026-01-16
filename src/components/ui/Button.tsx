@@ -15,6 +15,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:opacity-80",
         accent: "bg-accent text-accent-foreground hover:opacity-80",
         link: "text-primary underline-offset-4 hover:underline",
+        ghost: "underline-offset-4 hover:text-primary hover:decoration-primary",
       },
       shape: {
         default: "rounded",
