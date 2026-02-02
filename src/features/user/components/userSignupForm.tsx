@@ -1,6 +1,6 @@
 import Input from "@components/ui/Input.tsx";
 import * as yup from "yup";
-import type { UserSignUpRequestDTO } from "@features/user/types/userType.ts";
+import type { UserSignUpRequestDto } from "@features/user/types/userType.ts";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import type { ObjectSchema } from "yup";
@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 const userSignupForm = () => {
   const navigate = useNavigate();
 
-  const schema: ObjectSchema<UserSignUpRequestDTO> = yup.object().shape({
+  const schema: ObjectSchema<UserSignUpRequestDto> = yup.object().shape({
     userId: yup
       .string()
       .nullable()
@@ -49,7 +49,7 @@ const userSignupForm = () => {
     setError,
     clearErrors,
     formState: { errors },
-  } = useForm<UserSignUpRequestDTO>({
+  } = useForm<UserSignUpRequestDto>({
     resolver: yupResolver(schema),
     mode: "onChange",
   });
@@ -102,7 +102,7 @@ const userSignupForm = () => {
     }
   };
 
-  const onSubmit = async (data: UserSignUpRequestDTO) => {
+  const onSubmit = async (data: UserSignUpRequestDto) => {
     try {
       await signup(data);
       alert("회원가입이 완료되었습니다.");

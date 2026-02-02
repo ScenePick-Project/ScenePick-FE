@@ -1,14 +1,24 @@
-export interface UserSignUpResponseDTO {
+export interface UserSignUpResponseDto {
   userId: string;
 }
 
-export interface UserSignUpRequestDTO {
+export interface UserAuthResponseDto {
+  userId: string;
+  role: string;
+}
+
+export interface UserSignUpRequestDto {
   userId: string;
   email: string;
   username: string;
   password: string;
 }
 
-export interface UserEmailCheckRequestDTO {
+export interface UserEmailCheckRequestDto {
   email: string;
+}
+
+export interface UserLoginRequestDto {
+  loginId: string;
+  password: string;
 }
