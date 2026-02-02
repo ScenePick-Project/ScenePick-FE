@@ -4,6 +4,8 @@ import Layout from "./components/common/Layout.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ContentDetailPage from "@pages/content/ContentDetailPage.tsx";
 import SignUpPage from "@pages/signup/SignUpPage.tsx";
+import LoginPage from "@pages/login/LoginPage.tsx";
+import { RequireAuth } from "@shared/RequireAuth.tsx";
 
 export default function AppRouter() {
   return (
@@ -17,11 +19,16 @@ export default function AppRouter() {
           <Route path="/ost" />
           <Route path="/content/:id" element={<ContentDetailPage />} />
 
+          {/* 로그인이 필요한 페이지 */}
+          <Route element={<RequireAuth />}>
+            <Route path="/mypage" />
+          </Route>
+
           {/* 없는 페이지로 갈 경우 */}
           <Route path="*" element={<NotFound />} />
         </Route>
         {/* 레이아웃이 필요 없는 페이지 */}
-        <Route path="/login" />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route />
       </Routes>

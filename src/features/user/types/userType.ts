@@ -2,6 +2,11 @@ export interface UserSignUpResponseDto {
   userId: string;
 }
 
+export interface UserAuthResponseDto {
+  userId: string;
+  role: string;
+}
+
 export interface UserSignUpRequestDto {
   userId: string;
   email: string;
