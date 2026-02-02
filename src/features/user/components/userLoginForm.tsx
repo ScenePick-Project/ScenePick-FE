@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import type { ObjectSchema } from "yup";
 import { Button } from "@components/ui/Button.tsx";
 import { login } from "@features/user/api/userApi.ts";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import type { UserLoginRequestDto } from "@features/user/types/userType.ts";
 
 const userSignupForm = () => {
@@ -73,6 +73,19 @@ const userSignupForm = () => {
           로그인
         </Button>
       </form>
+      <div className={"flex items-center justify-center gap-3 mt-3"}>
+        <div className={"items-center"}>아이디 찾기</div>
+        <div>|</div>
+        <div>비밀번호 찾기</div>
+      </div>
+      <div className={"flex items-center justify-center gap-1.5 mt-1"}>
+        <div>계정이 없으신가요?</div>
+        <div>
+          <Link to={"/signup"} className={"text-primary"}>
+            회원가입
+          </Link>
+        </div>
+      </div>
     </>
   );
 };
