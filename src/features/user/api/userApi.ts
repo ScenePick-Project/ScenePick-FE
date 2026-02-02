@@ -1,17 +1,19 @@
 import type {
-  UserEmailCheckRequestDTO,
-  UserSignUpRequestDTO,
-  UserSignUpResponseDTO,
+  UserAuthResponseDto,
+  UserEmailCheckRequestDto,
+  UserLoginRequestDto,
+  UserSignUpRequestDto,
+  UserSignUpResponseDto,
 } from "@features/user/types/userType.ts";
 import { request } from "@shared/request.ts";
 
 /**
  * 회원가입을 합니다.
- * @param UserSignUpRequestDTO 회원가입 정보
+ * @param UserSignUpRequestDto 회원가입 정보
  * @return UserSignUpResponseDTO 회원가입 아이디
  */
-export const signup = (dto: UserSignUpRequestDTO) => {
-  return request<UserSignUpResponseDTO>({
+export const signup = (dto: UserSignUpRequestDto) => {
+  return request<UserSignUpResponseDto>({
     method: "POST",
     url: "/user/signup",
     body: dto,
@@ -33,13 +35,38 @@ export const checkIdDuplicate = (userId: string) => {
 
 /**
  * 이메일 중복 확인
- * @param UserEmailCheckRequestDTO
+ * @param UserEmailCheckRequestDto
  * @return boolean 이메일 중복 여부
  */
-export const checkEmailDuplicate = (dto: UserEmailCheckRequestDTO) => {
+export const checkEmailDuplicate = (dto: UserEmailCheckRequestDto) => {
   return request<boolean>({
     method: "POST",
     url: "/user/check-email",
     body: dto,
+  });
+};
+
+/**
+ * 로그인을 합니다.
+ * @Param UserLoginRequestDto 로그인 정보
+ * @return null
+ */
+export const login = (dto: UserLoginRequestDto) => {
+  return request<null>({
+    method: "POST",
+    url: "/user/login",
+    body: dto,
+  });
+};
+
+/**
+ * 로그인 여부를 확인합니다.
+ * @Param null
+ * @return UserAuthResponseDto
+ */
+export const checkLogin = () => {
+  return request<UserAuthResponseDto>({
+    method: "GET",
+    url: "/user/me",
   });
 };
