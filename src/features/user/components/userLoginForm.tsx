@@ -5,11 +5,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import type { ObjectSchema } from "yup";
 import { Button } from "@components/ui/Button.tsx";
 import { login } from "@features/user/api/userApi.ts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { UserLoginRequestDto } from "@features/user/types/userType.ts";
 
 const userSignupForm = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // 쿼리 스트링 읽기
 
   const schema: ObjectSchema<UserLoginRequestDto> = yup.object().shape({
     loginId: yup
@@ -36,9 +37,16 @@ const userSignupForm = () => {
     try {
       await login(data);
       alert("로그인이 완료되었습니다.");
-      navigate("/");
+
+      // redirect 파라미터가 있는 경우
+      const redirectUrl = searchParams.get("redirect");
+      // 파라미터 페이지로 이동
+      navigate(redirectUrl ? decodeURIComponent(redirectUrl) : "/", {
+        replace: true,
+      });
     } catch (error) {
       console.error(error);
+      alert("아이디 또는 비밀번호를 확인해주세요.");
     }
   };
 
