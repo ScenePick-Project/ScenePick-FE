@@ -2,8 +2,9 @@ import { request } from "@shared/request.ts";
 
 import type {
   ContentBasicDTO,
-  PersonDTO,
+  CreditDTO,
   EpisodeDTO,
+  SeasonDTO,
 } from "@features/contentDetail/types/contentDetailTypes.ts";
 
 /**
@@ -21,15 +22,21 @@ export const getContentBasic = (contentId: number) => {
 /**
  * 해당 작품의 출연진 리스트를 조회합니다.
  * @param contentId 조회할 콘텐츠의 고유 ID
- * @returns 인물 정보 배열
+ * @returns 출연진 정보 리스트
  */
-export const getContentCast = async (contentId: number) => {
-  const data = await request<{ persons: PersonDTO[] }>({
+export const getContentCredits = async (
+  contentId: number,
+  seasonNo?: number | null,
+) => {
+  const data = await request<{ creditList: CreditDTO[] }>({
     method: "GET",
-    url: `/contents/${contentId}/persons`,
+    url:
+      seasonNo != null
+        ? `/contents/${contentId}/seasons/${seasonNo}/credits`
+        : `/contents/${contentId}/credits`,
   });
 
-  return data.persons;
+  return data.creditList;
 };
 
 /**
@@ -37,11 +44,28 @@ export const getContentCast = async (contentId: number) => {
  * @param contentId 조회할 콘텐츠의 고유 ID
  * @returns 에피소드 정보 배열
  */
-export const getContentEpisodes = async (contentId: number) => {
-  const data = await request<{ episodes: EpisodeDTO[] }>({
+export const getContentEpisodes = async (
+  contentId: number,
+  seasonNo: number,
+) => {
+  const data = await request<{ episodeList: EpisodeDTO[] }>({
     method: "GET",
-    url: `/contents/${contentId}/episodes`,
+    url: `/contents/${contentId}/seasons/${seasonNo}/episodes`,
   });
 
-  return data.episodes;
+  return data.episodeList;
+};
+
+/**
+ * 해당 작품의 시즌 리스트를 조회합니다.
+ * @param contentId 조회할 콘텐츠의 고유 ID
+ * @returns 시즌 정보 배열
+ */
+export const getContentSeasons = async (contentId: number) => {
+  const data = await request<{ seasonList: SeasonDTO[] }>({
+    method: "GET",
+    url: `/contents/${contentId}/seasons`,
+  });
+
+  return data.seasonList;
 };
