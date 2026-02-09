@@ -1,11 +1,11 @@
 import type {
-  ContentBasicDTO,
-  SeasonDTO,
+  ContentBasicDto,
+  SeasonDto,
 } from "@features/contentDetail/types/contentDetailTypes.ts";
 
 interface InfoTabProps {
-  content?: ContentBasicDTO;
-  season?: SeasonDTO | null;
+  content?: ContentBasicDto;
+  season?: SeasonDto | null;
   isSeasonLoading?: boolean;
   hasSeasons?: boolean;
 }

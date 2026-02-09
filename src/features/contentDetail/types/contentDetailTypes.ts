@@ -1,21 +1,21 @@
-export interface ContentBasicDTO {
+export interface ContentBasicDto {
   contentId: number;
   title: string;
   posterImageUrl: string;
   synopsis: string | null;
   genreList: string[];
   defaultSeasonNo?: number | null;
-  seasonList?: SeasonDTO[];
+  seasonList?: SeasonDto[];
 }
 
-export interface CreditDTO {
+export interface CreditDto {
   creditId: number;
   name: string;
   charName: string;
   profileImageUrl: string;
 }
 
-export interface EpisodeDTO {
+export interface EpisodeDto {
   episodeId: number;
   episodeNo: number;
   title: string;
@@ -23,11 +23,11 @@ export interface EpisodeDTO {
   stillImageUrl: string;
 }
 
-export interface EpisodeListDTO {
-  episodeList: EpisodeDTO[];
+export interface EpisodeListDto {
+  episodeList: EpisodeDto[];
 }
 
-export interface SeasonDTO {
+export interface SeasonDto {
   seasonId: number;
   seasonNo: number;
   name: string;

@@ -1,4 +1,4 @@
-import type { SeasonDTO } from "@features/contentDetail/types/contentDetailTypes.ts";
+import type { SeasonDto } from "@features/contentDetail/types/contentDetailTypes.ts";
 import {
   getSeasonDisplayName,
   getSeasonLabel,
@@ -7,7 +7,7 @@ import {
 type SeasonSelectorVariant = "header" | "sidebar";
 
 interface SeasonSelectorProps {
-  seasons: SeasonDTO[];
+  seasons: SeasonDto[];
   selectedSeasonNo: number | null;
   onSeasonChange: (seasonNo: number) => void;
   contentTitle?: string;

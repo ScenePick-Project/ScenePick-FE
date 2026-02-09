@@ -1,13 +1,13 @@
 import type {
-  ContentBasicDTO,
-  SeasonDTO,
+  ContentBasicDto,
+  SeasonDto,
 } from "@features/contentDetail/types/contentDetailTypes.ts";
 import { SeasonSelector } from "@features/contentDetail/components/SeasonSelector.tsx";
 
 interface ContentHeaderProps {
-  content?: ContentBasicDTO;
-  season?: SeasonDTO | null;
-  seasons: SeasonDTO[];
+  content?: ContentBasicDto;
+  season?: SeasonDto | null;
+  seasons: SeasonDto[];
   selectedSeasonNo: number | null;
   onSeasonChange: (seasonNo: number) => void;
 }
@@ -19,43 +19,199 @@ export const ContentHeader = ({
   selectedSeasonNo,
   onSeasonChange,
 }: ContentHeaderProps) => {
-  const getGenreColor = (genre: string) => {
-    const colors: Record<string, string> = {
-      ACTION: "bg-red-500",
-      ADVENTURE: "bg-orange-500",
-      ANIMATION: "bg-amber-400",
-      COMEDY: "bg-yellow-400",
-      DOCUMENTARY: "bg-lime-500",
-      FAMILY: "bg-green-500",
-      DRAMA: "bg-emerald-500",
-      SCIENCE_FICTION: "bg-teal-500",
-      SCI_FI: "bg-teal-500",
-      MYSTERY: "bg-cyan-500",
-      TV_MOVIE: "bg-sky-500",
-      HISTORY: "bg-blue-500",
-      WAR: "bg-indigo-500",
-      FANTASY: "bg-violet-500",
-      WESTERN: "bg-purple-500",
-      MUSIC: "bg-fuchsia-500",
-      ROMANCE: "bg-pink-500",
-      THRILLER: "bg-rose-500",
-      HORROR: "bg-slate-900",
-      CRIME: "bg-stone-600",
+  const getGenreStyles = (genre: string) => {
+    const colors: Record<
+      string,
+      { dot: string; text: string; bg: string; border: string }
+    > = {
+      ACTION: {
+        dot: "bg-red-500",
+        text: "text-red-700",
+        bg: "bg-red-50",
+        border: "border-red-200",
+      },
+      ADVENTURE: {
+        dot: "bg-orange-500",
+        text: "text-orange-700",
+        bg: "bg-orange-50",
+        border: "border-orange-200",
+      },
+      ANIMATION: {
+        dot: "bg-amber-400",
+        text: "text-amber-700",
+        bg: "bg-amber-50",
+        border: "border-amber-200",
+      },
+      COMEDY: {
+        dot: "bg-yellow-400",
+        text: "text-yellow-700",
+        bg: "bg-yellow-50",
+        border: "border-yellow-200",
+      },
+      DOCUMENTARY: {
+        dot: "bg-lime-500",
+        text: "text-lime-700",
+        bg: "bg-lime-50",
+        border: "border-lime-200",
+      },
+      FAMILY: {
+        dot: "bg-green-500",
+        text: "text-green-700",
+        bg: "bg-green-50",
+        border: "border-green-200",
+      },
+      DRAMA: {
+        dot: "bg-emerald-500",
+        text: "text-emerald-700",
+        bg: "bg-emerald-50",
+        border: "border-emerald-200",
+      },
+      SCIENCE_FICTION: {
+        dot: "bg-teal-500",
+        text: "text-teal-700",
+        bg: "bg-teal-50",
+        border: "border-teal-200",
+      },
+      SCI_FI: {
+        dot: "bg-teal-500",
+        text: "text-teal-700",
+        bg: "bg-teal-50",
+        border: "border-teal-200",
+      },
+      MYSTERY: {
+        dot: "bg-cyan-500",
+        text: "text-cyan-700",
+        bg: "bg-cyan-50",
+        border: "border-cyan-200",
+      },
+      TV_MOVIE: {
+        dot: "bg-sky-500",
+        text: "text-sky-700",
+        bg: "bg-sky-50",
+        border: "border-sky-200",
+      },
+      HISTORY: {
+        dot: "bg-blue-500",
+        text: "text-blue-700",
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+      },
+      WAR: {
+        dot: "bg-indigo-500",
+        text: "text-indigo-700",
+        bg: "bg-indigo-50",
+        border: "border-indigo-200",
+      },
+      FANTASY: {
+        dot: "bg-violet-500",
+        text: "text-violet-700",
+        bg: "bg-violet-50",
+        border: "border-violet-200",
+      },
+      WESTERN: {
+        dot: "bg-purple-500",
+        text: "text-purple-700",
+        bg: "bg-purple-50",
+        border: "border-purple-200",
+      },
+      MUSIC: {
+        dot: "bg-fuchsia-500",
+        text: "text-fuchsia-700",
+        bg: "bg-fuchsia-50",
+        border: "border-fuchsia-200",
+      },
+      ROMANCE: {
+        dot: "bg-pink-500",
+        text: "text-pink-700",
+        bg: "bg-pink-50",
+        border: "border-pink-200",
+      },
+      THRILLER: {
+        dot: "bg-rose-500",
+        text: "text-rose-700",
+        bg: "bg-rose-50",
+        border: "border-rose-200",
+      },
+      HORROR: {
+        dot: "bg-slate-900",
+        text: "text-slate-700",
+        bg: "bg-slate-100",
+        border: "border-slate-200",
+      },
+      CRIME: {
+        dot: "bg-stone-600",
+        text: "text-stone-700",
+        bg: "bg-stone-100",
+        border: "border-stone-200",
+      },
     };
+
     const key = genre.toUpperCase().replace(/[\s-]/g, "_");
     if (colors[key]) return colors[key];
+
     const palette = [
-      "bg-blue-500",
-      "bg-emerald-500",
-      "bg-amber-400",
-      "bg-rose-500",
-      "bg-violet-500",
-      "bg-teal-500",
-      "bg-orange-500",
-      "bg-lime-500",
-      "bg-cyan-500",
-      "bg-fuchsia-500",
+      {
+        dot: "bg-blue-500",
+        text: "text-blue-700",
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+      },
+      {
+        dot: "bg-emerald-500",
+        text: "text-emerald-700",
+        bg: "bg-emerald-50",
+        border: "border-emerald-200",
+      },
+      {
+        dot: "bg-amber-400",
+        text: "text-amber-700",
+        bg: "bg-amber-50",
+        border: "border-amber-200",
+      },
+      {
+        dot: "bg-rose-500",
+        text: "text-rose-700",
+        bg: "bg-rose-50",
+        border: "border-rose-200",
+      },
+      {
+        dot: "bg-violet-500",
+        text: "text-violet-700",
+        bg: "bg-violet-50",
+        border: "border-violet-200",
+      },
+      {
+        dot: "bg-teal-500",
+        text: "text-teal-700",
+        bg: "bg-teal-50",
+        border: "border-teal-200",
+      },
+      {
+        dot: "bg-orange-500",
+        text: "text-orange-700",
+        bg: "bg-orange-50",
+        border: "border-orange-200",
+      },
+      {
+        dot: "bg-lime-500",
+        text: "text-lime-700",
+        bg: "bg-lime-50",
+        border: "border-lime-200",
+      },
+      {
+        dot: "bg-cyan-500",
+        text: "text-cyan-700",
+        bg: "bg-cyan-50",
+        border: "border-cyan-200",
+      },
+      {
+        dot: "bg-fuchsia-500",
+        text: "text-fuchsia-700",
+        bg: "bg-fuchsia-50",
+        border: "border-fuchsia-200",
+      },
     ];
+
     const hash = key
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -117,19 +273,24 @@ export const ContentHeader = ({
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {content.genreList.map((genre) => (
-              <div
-                key={genre}
-                className="flex items-center gap-2.5 px-5 py-2 rounded-full border border-slate-200 bg-white shadow-sm"
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${getGenreColor(genre)}`}
-                />
-                <span className="text-sm font-black text-slate-700 tracking-tight uppercase">
-                  {genre}
-                </span>
-              </div>
-            ))}
+            {content.genreList.map((genre) => {
+              const genreStyles = getGenreStyles(genre);
+              return (
+                <div
+                  key={genre}
+                  className={`flex items-center gap-2.5 px-5 py-2 rounded-full border ${genreStyles.border} ${genreStyles.bg}`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${genreStyles.dot}`}
+                  />
+                  <span
+                    className={`text-sm font-black tracking-tight uppercase ${genreStyles.text}`}
+                  >
+                    {genre}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

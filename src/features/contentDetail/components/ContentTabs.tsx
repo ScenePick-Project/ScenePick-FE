@@ -4,8 +4,8 @@ import { Tabs } from "@components/ui/Tabs.tsx";
 import { CreditTab } from "@features/contentDetail/components/CreditTab.tsx";
 import { EpisodeTab } from "@features/contentDetail/components/EpisodeTab.tsx";
 import type {
-  ContentBasicDTO,
-  SeasonDTO,
+  ContentBasicDto,
+  SeasonDto,
 } from "@features/contentDetail/types/contentDetailTypes.ts";
 
 const CONTENT_TABS = [
@@ -19,9 +19,9 @@ type TabId = (typeof CONTENT_TABS)[number]["id"];
 
 type ContentTabsProps = {
   contentId: number;
-  content?: ContentBasicDTO;
-  seasons: SeasonDTO[];
-  selectedSeason: SeasonDTO | null;
+  content?: ContentBasicDto;
+  seasons: SeasonDto[];
+  selectedSeason: SeasonDto | null;
   selectedSeasonNo: number | null;
   isContentLoading: boolean;
   isTv: boolean;

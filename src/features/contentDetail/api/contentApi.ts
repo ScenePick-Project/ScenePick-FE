@@ -1,10 +1,10 @@
 import { request } from "@shared/request.ts";
 
 import type {
-  ContentBasicDTO,
-  CreditDTO,
-  EpisodeDTO,
-  SeasonDTO,
+  ContentBasicDto,
+  CreditDto,
+  EpisodeDto,
+  SeasonDto,
 } from "@features/contentDetail/types/contentDetailTypes.ts";
 
 /**
@@ -13,7 +13,7 @@ import type {
  * @returns 작품 기본 정보
  */
 export const getContentBasic = (contentId: number) => {
-  return request<ContentBasicDTO>({
+  return request<ContentBasicDto>({
     method: "GET",
     url: `/contents/${contentId}`,
   });
@@ -28,7 +28,7 @@ export const getContentCredits = async (
   contentId: number,
   seasonNo?: number | null,
 ) => {
-  const data = await request<{ creditList: CreditDTO[] }>({
+  const data = await request<{ creditList: CreditDto[] }>({
     method: "GET",
     url:
       seasonNo != null
@@ -48,7 +48,7 @@ export const getContentEpisodes = async (
   contentId: number,
   seasonNo: number,
 ) => {
-  const data = await request<{ episodeList: EpisodeDTO[] }>({
+  const data = await request<{ episodeList: EpisodeDto[] }>({
     method: "GET",
     url: `/contents/${contentId}/seasons/${seasonNo}/episodes`,
   });
@@ -62,7 +62,7 @@ export const getContentEpisodes = async (
  * @returns 시즌 정보 배열
  */
 export const getContentSeasons = async (contentId: number) => {
-  const data = await request<{ seasonList: SeasonDTO[] }>({
+  const data = await request<{ seasonList: SeasonDto[] }>({
     method: "GET",
     url: `/contents/${contentId}/seasons`,
   });

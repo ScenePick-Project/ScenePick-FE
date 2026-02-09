@@ -1,9 +1,9 @@
-import type { SeasonDTO } from "@features/contentDetail/types/contentDetailTypes.ts";
+import type { SeasonDto } from "@features/contentDetail/types/contentDetailTypes.ts";
 
 export const getSeasonLabel = (seasonNo: number) => `시즌 ${seasonNo}`;
 
 export const getSeasonDisplayName = (
-  season: SeasonDTO,
+  season: SeasonDto,
   title?: string,
 ) => {
   const name = season.name?.trim();
@@ -34,5 +34,5 @@ export const getSeasonDisplayName = (
   return normalized;
 };
 
-export const sortSeasons = (seasonList?: SeasonDTO[]) =>
+export const sortSeasons = (seasonList?: SeasonDto[]) =>
   seasonList?.slice().sort((a, b) => a.seasonNo - b.seasonNo) ?? [];
