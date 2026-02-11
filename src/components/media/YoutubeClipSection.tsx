@@ -2,7 +2,10 @@ import { useMemo, useState } from "react";
 import type { FieldPathByValue, UseFormReturn } from "react-hook-form";
 import Input from "@components/ui/Input.tsx";
 import { Button } from "@components/ui/Button.tsx";
-import { parseYoutubeUrl, type YoutubeParseResult } from "@shared/media/youtube.ts";
+import {
+  parseYoutubeUrl,
+  type YoutubeParseResult,
+} from "@shared/media/youtube.ts";
 
 type YoutubeClipFieldValues = {
   youtubeUrl: string;
@@ -17,14 +20,14 @@ interface YoutubeClipSectionProps<TFieldValues extends YoutubeClipFieldValues> {
   applyLabel?: string;
 }
 
-export const YoutubeClipSection = <TFieldValues extends YoutubeClipFieldValues>(
-  {
-    form,
-    label = "유튜브 클립 링크",
-    placeholder = "https://youtu.be/영상ID?t=1m20s",
-    applyLabel = "불러오기",
-  }: YoutubeClipSectionProps<TFieldValues>,
-) => {
+export const YoutubeClipSection = <
+  TFieldValues extends YoutubeClipFieldValues,
+>({
+  form,
+  label = "유튜브 클립 링크",
+  placeholder = "https://youtu.be/영상ID?t=1m20s",
+  applyLabel = "불러오기",
+}: YoutubeClipSectionProps<TFieldValues>) => {
   type StringFieldPath = FieldPathByValue<TFieldValues, string>;
 
   const youtubeUrlField = "youtubeUrl" as StringFieldPath;
@@ -41,6 +44,9 @@ export const YoutubeClipSection = <TFieldValues extends YoutubeClipFieldValues>(
     null,
   );
 
+  /**
+   * 입력한 유튜브 URL을 검증하고 유효하면 유튜브 영상 ID와 썸네일을 갱신한다.
+   */
   const handleYoutubeApply = () => {
     const url = (watch(youtubeUrlField) ?? "").trim();
     if (!url) {
@@ -62,7 +68,6 @@ export const YoutubeClipSection = <TFieldValues extends YoutubeClipFieldValues>(
 
     clearErrors(youtubeUrlField);
     setYoutubeMeta(parsed);
-
   };
 
   const youtubePreview = useMemo(() => {

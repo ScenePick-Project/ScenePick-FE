@@ -3,6 +3,7 @@ import { InfoTab } from "@features/contentDetail/components/InfoTab.tsx";
 import { Tabs } from "@components/ui/Tabs.tsx";
 import { CreditTab } from "@features/contentDetail/components/CreditTab.tsx";
 import { EpisodeTab } from "@features/contentDetail/components/EpisodeTab.tsx";
+import { ReviewTab } from "@features/review/components/ReviewTab.tsx";
 import type {
   ContentBasicDto,
   SeasonDto,
@@ -85,7 +86,7 @@ export const ContentTabs = ({
           />
         )}
         {activeTab === "review" && (
-          <div className="text-gray-500">리뷰가 아직 없습니다.</div>
+          <ReviewTab contentId={contentId} contentTitle={content?.title} />
         )}
       </div>
     </div>

@@ -35,6 +35,9 @@ export const ItunesTrackPicker = ({
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
+  /**
+   * iTunes Search API를 호출해 검색 결과를 갱신한다.
+   */
   const handleSearchItunes = async () => {
     const trimmed = query.trim();
     if (!trimmed) {
