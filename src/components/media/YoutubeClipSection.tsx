@@ -126,7 +126,7 @@ export const YoutubeClipSection = <
           <div className="mt-3">
             <Input
               {...register(startTimeField)}
-              placeholder="예) 01:20"
+              placeholder="예) 1:20"
               isError={!!startTimeError}
               errorMessage={startTimeError?.message}
             />
@@ -139,7 +139,7 @@ export const YoutubeClipSection = <
           <div className="mt-3">
             <Input
               {...register(endTimeField)}
-              placeholder="예) 02:05"
+              placeholder="예) 2:05"
               isError={!!endTimeError}
               errorMessage={endTimeError?.message}
             />

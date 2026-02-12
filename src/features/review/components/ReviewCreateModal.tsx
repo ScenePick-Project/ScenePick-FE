@@ -29,6 +29,8 @@ interface ReviewFormValues {
   endTime: string;
 }
 
+const timePattern = /^(?:[0-5]?\d:[0-5]\d|[1-9]\d*:[0-5]\d:[0-5]\d)$/;
+
 const schema: ObjectSchema<ReviewFormValues> = yup.object().shape({
   reviewBody: yup
     .string()
@@ -52,7 +54,7 @@ const schema: ObjectSchema<ReviewFormValues> = yup.object().shape({
     .defined()
     .test("time-format", "시간 형식이 올바르지 않습니다.", (value) => {
       if (!value) return true;
-      return parseTimeToSeconds(value) !== null;
+      return timePattern.test(value);
     }),
   endTime: yup
     .string()
@@ -61,7 +63,7 @@ const schema: ObjectSchema<ReviewFormValues> = yup.object().shape({
     .defined()
     .test("time-format", "시간 형식이 올바르지 않습니다.", (value) => {
       if (!value) return true;
-      return parseTimeToSeconds(value) !== null;
+      return timePattern.test(value);
     }),
 });
 

@@ -47,6 +47,7 @@ export const ItunesTrackPicker = ({
 
     setIsSearching(true);
     setError(null);
+    setResults([]);
 
     try {
       const response = await fetch(
