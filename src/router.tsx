@@ -6,11 +6,19 @@ import ContentDetailPage from "@pages/content/ContentDetailPage.tsx";
 import SignUpPage from "@pages/signup/SignUpPage.tsx";
 import LoginPage from "@pages/login/LoginPage.tsx";
 import { RequireAuth } from "@shared/RequireAuth.tsx";
+import OAuthCallback from "@pages/auth/OAuthCallback.tsx";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* 레이아웃이 필요 없는 페이지 */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+
+        {/* 소셜 로그인 콜백 경로 */}
+        <Route path="/oauth/callback" element={<OAuthCallback />} />
+
         {/* 레이아웃이 필요한 페이지 */}
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
@@ -27,9 +35,6 @@ export default function AppRouter() {
           {/* 없는 페이지로 갈 경우 */}
           <Route path="*" element={<NotFound />} />
         </Route>
-        {/* 레이아웃이 필요 없는 페이지 */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
         <Route />
       </Routes>
     </BrowserRouter>
