@@ -22,3 +22,8 @@ export interface UserLoginRequestDto {
   loginId: string;
   password: string;
 }
+
+export interface LoginResponseDto {
+  accessToken: string;
+  refreshToken: string;
+}
