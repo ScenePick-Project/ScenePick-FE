@@ -10,26 +10,20 @@ export default function Navbar() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-
-    // 토큰이 아예 없는 경우 API 호출도 하지 않고 바로 null 처리
-    if (!token) {
-      setUserAuth(null);
-      setLoading(false);
-      return;
-    }
-
-    (async () => {
+    // 토큰 존재 여부를 서버에 물어봄
+    const fetchAuth = async () => {
+      setLoading(true);
       try {
         const data = await checkLogin();
         setUserAuth(data);
-      } catch {
+      } catch (error) {
         setUserAuth(null);
-        localStorage.removeItem("accessToken"); // 유효하지 않은 토큰 삭제
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchAuth();
   }, []);
 
   const isAuthed = !!userAuth;
