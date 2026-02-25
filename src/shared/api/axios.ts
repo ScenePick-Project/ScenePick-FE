@@ -12,10 +12,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
     return config;
   },
   (error) => Promise.reject(error),
@@ -54,7 +50,11 @@ api.interceptors.response.use(
 
     if (original?._retry) return Promise.reject(error);
 
-    // access 만료일 때만 refresh를 시도
+    // checkLogin(/user/me) 요청은 401이 나더라도 forceLogout을 실행하지 않음
+    if (status === 401 && original?.url?.includes("/user/me")) {
+      return Promise.reject(error);
+    }
+
     const shouldRefresh = status === 401 && code === "JWT4011";
 
     // refresh 요청 자체가 실패한 경우인지 체크

@@ -61,9 +61,7 @@ export const login = async (
     body: dto,
   });
 
-  // 서버 응답에서 토큰을 추출해 로컬 스토리지에 저장
   if (response && response.accessToken) {
-    localStorage.setItem("accessToken", response.accessToken);
     window.location.href = "/";
   }
 
