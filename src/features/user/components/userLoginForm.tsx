@@ -5,11 +5,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import type { ObjectSchema } from "yup";
 import { Button } from "@components/ui/Button.tsx";
 import { login } from "@features/user/api/userApi.ts";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import type { UserLoginRequestDto } from "@features/user/types/userType.ts";
 
 const userSignupForm = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams(); // 쿼리 스트링 읽기
 
   const schema: ObjectSchema<UserLoginRequestDto> = yup.object().shape({
@@ -27,7 +26,7 @@ const userSignupForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<UserLoginRequestDto>({
     resolver: yupResolver(schema),
     mode: "onChange",
@@ -36,14 +35,13 @@ const userSignupForm = () => {
   const onSubmit = async (data: UserLoginRequestDto) => {
     try {
       await login(data);
-      alert("로그인이 완료되었습니다.");
 
       // redirect 파라미터가 있는 경우
       const redirectUrl = searchParams.get("redirect");
-      // 파라미터 페이지로 이동
-      navigate(redirectUrl ? decodeURIComponent(redirectUrl) : "/", {
-        replace: true,
-      });
+      // 홈으로 이동
+      window.location.href = redirectUrl
+        ? decodeURIComponent(redirectUrl)
+        : "/";
     } catch (error) {
       console.error(error);
       alert("아이디 또는 비밀번호를 확인해주세요.");
@@ -69,8 +67,20 @@ const userSignupForm = () => {
           placeholder={"비밀번호"}
           type={"password"}
         />
-        <Button type={"submit"} className={"w-full text-md"} size={"lg"}>
-          로그인
+        <Button
+          type={"submit"}
+          className={"w-full text-md"}
+          size={"lg"}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></div>
+              로그인 중...
+            </>
+          ) : (
+            "로그인"
+          )}
         </Button>
       </form>
       <div className={"flex items-center justify-center gap-3 mt-3"}>
@@ -86,6 +96,26 @@ const userSignupForm = () => {
           </Link>
         </div>
       </div>
+      {/* 소셜 로그인 구분선 및 버튼 추가 (구글 로그인 버튼) */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-white px-2 text-gray-500">또는</span>
+        </div>
+      </div>
+
+      <a
+        href="http://localhost:8080/oauth2/authorization/google"
+        className="flex w-fit mx-auto items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+      >
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
+          className="h-5 w-5"
+        />
+      </a>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import type {
+  LoginResponseDto,
   UserAuthResponseDto,
   UserEmailCheckRequestDto,
   UserLoginRequestDto,
@@ -49,14 +50,22 @@ export const checkEmailDuplicate = (dto: UserEmailCheckRequestDto) => {
 /**
  * 로그인을 합니다.
  * @Param UserLoginRequestDto 로그인 정보
- * @return null
+ * @return LoginResponseDto
  */
-export const login = (dto: UserLoginRequestDto) => {
-  return request<null>({
+export const login = async (
+  dto: UserLoginRequestDto,
+): Promise<LoginResponseDto> => {
+  const response = await request<LoginResponseDto>({
     method: "POST",
     url: "/user/login",
     body: dto,
   });
+
+  if (response && response.accessToken) {
+    window.location.href = "/";
+  }
+
+  return response;
 };
 
 /**

@@ -10,16 +10,20 @@ export default function Navbar() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    (async () => {
+    // 토큰 존재 여부를 서버에 물어봄
+    const fetchAuth = async () => {
+      setLoading(true);
       try {
         const data = await checkLogin();
         setUserAuth(data);
-      } catch {
+      } catch (error) {
         setUserAuth(null);
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchAuth();
   }, []);
 
   const isAuthed = !!userAuth;
