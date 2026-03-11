@@ -96,7 +96,7 @@ const userSignupForm = () => {
           </Link>
         </div>
       </div>
-      {/* 소셜 로그인 구분선 및 버튼 추가 (구글 로그인 버튼) */}
+      {/* 소셜 로그인 구분선 및 버튼 추가 */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-300"></div>
@@ -105,17 +105,40 @@ const userSignupForm = () => {
           <span className="bg-white px-2 text-gray-500">또는</span>
         </div>
       </div>
+      <div className="flex items-center justify-center gap-4 w-full">
+        {/* 구글 로그인 */}
+        <a
+          href="http://localhost:8080/oauth2/authorization/google"
+          className="flex h-12 w-12 items-center justify-center rounded-md border border-gray-300 bg-white shadow-sm hover:bg-gray-50 transition-colors"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="h-6 w-6"
+          />
+        </a>
 
-      <a
-        href="http://localhost:8080/oauth2/authorization/google"
-        className="flex w-fit mx-auto items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-      >
-        <img
-          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-          alt="Google"
-          className="h-5 w-5"
-        />
-      </a>
+        {/* 카카오 로그인 */}
+        <a
+          href="http://localhost:8080/oauth2/authorization/kakao"
+          className="flex h-12 w-12 items-center justify-center rounded-md bg-[#FEE500] shadow-sm hover:bg-[#FDD835] transition-colors"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M12 4C7.58172 4 4 6.76371 4 10.1714C4 12.3703 5.48052 14.2922 7.71366 15.4415L6.76371 18.8701C6.67555 19.1892 7.01323 19.4423 7.29806 19.2539L11.3965 16.5326C11.5937 16.558 11.7952 16.5714 12 16.5714C16.4183 16.5714 20 13.8077 20 10.1714C20 6.76371 16.4183 4 12 4Z"
+              fill="#191919"
+            />
+          </svg>
+        </a>
+      </div>
     </>
   );
 };
