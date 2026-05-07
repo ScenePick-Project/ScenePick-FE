@@ -79,3 +79,15 @@ export const checkLogin = () => {
     url: "/user/me",
   });
 };
+
+/**
+ * 로그아웃을 합니다.
+ * 백엔드에서 쿠키를 삭제 처리합니다.
+ * @return void
+ */
+export const logout = async (): Promise<void> => {
+  await request<void>({
+    method: "POST",
+    url: "/user/logout",
+  });
+};

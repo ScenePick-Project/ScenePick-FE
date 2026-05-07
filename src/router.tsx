@@ -7,6 +7,7 @@ import SignUpPage from "@pages/signup/SignUpPage.tsx";
 import LoginPage from "@pages/login/LoginPage.tsx";
 import { RequireAuth } from "@shared/RequireAuth.tsx";
 import OAuthCallback from "@pages/auth/OAuthCallback.tsx";
+import MyPage from "@pages/mypage/MyPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -29,7 +30,7 @@ export default function AppRouter() {
 
           {/* 로그인이 필요한 페이지 */}
           <Route element={<RequireAuth />}>
-            <Route path="/mypage" />
+            <Route path="/mypage" element={<MyPage />} />
           </Route>
 
           {/* 없는 페이지로 갈 경우 */}
