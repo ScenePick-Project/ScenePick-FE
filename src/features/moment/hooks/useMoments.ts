@@ -1,4 +1,5 @@
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
@@ -12,6 +13,7 @@ import {
 import type {
   MomentCursor,
   MomentInput,
+  MomentSlice,
   MomentUpdate,
 } from "../types/momentTypes.ts";
 
@@ -50,13 +52,43 @@ export const useMomentActions = (userId: string, contentId: number) => {
       momentId: number;
       body: MomentUpdate;
     }) => updateMoment(momentId, body),
-    onSuccess: refresh,
+    onSuccess: (updated) => {
+      queryClient.setQueriesData<InfiniteData<MomentSlice>>(
+        { queryKey: ["moments", userId] },
+        (data) =>
+          data && {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              momentList: page.momentList.map((moment) =>
+                moment.momentId === updated.momentId ? updated : moment,
+              ),
+            })),
+          },
+      );
+      return refresh();
+    },
     retry: false,
   });
   const remove = useMutation({
     gcTime: 0,
     mutationFn: deleteMoment,
-    onSuccess: refresh,
+    onSuccess: (_, momentId) => {
+      queryClient.setQueriesData<InfiniteData<MomentSlice>>(
+        { queryKey: ["moments", userId] },
+        (data) =>
+          data && {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              momentList: page.momentList.filter(
+                (moment) => moment.momentId !== momentId,
+              ),
+            })),
+          },
+      );
+      return refresh();
+    },
     retry: false,
   });
   return { create, update, remove };
