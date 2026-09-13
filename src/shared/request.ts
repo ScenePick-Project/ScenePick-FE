@@ -8,7 +8,7 @@ export interface RequestConfig {
   method: HTTPMethod;
   url: string;
   query?: Record<string, unknown>;
-  body?: any;
+  body?: unknown;
 }
 
 export const request = async <T>(config: RequestConfig): Promise<T> => {

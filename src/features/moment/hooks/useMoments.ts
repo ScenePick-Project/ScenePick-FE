@@ -1,0 +1,63 @@
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  createMoment,
+  deleteMoment,
+  getMoments,
+  updateMoment,
+} from "../api/momentApi.ts";
+import type {
+  MomentCursor,
+  MomentInput,
+  MomentUpdate,
+} from "../types/momentTypes.ts";
+
+export const useMoments = (
+  userId: string,
+  contentId: number,
+  youtubeId: string | null,
+) =>
+  useInfiniteQuery({
+    queryKey: ["moments", userId, "list", contentId, youtubeId],
+    queryFn: ({ pageParam }) => getMoments(contentId, youtubeId, pageParam),
+    initialPageParam: null as MomentCursor | null,
+    getNextPageParam: (page) =>
+      page.hasNext && page.nextCursor ? page.nextCursor : undefined,
+    retry: false,
+    gcTime: 0,
+  });
+
+export const useMomentActions = (userId: string, contentId: number) => {
+  const queryClient = useQueryClient();
+  const refresh = () =>
+    queryClient.invalidateQueries({ queryKey: ["moments", userId] });
+
+  const create = useMutation({
+    gcTime: 0,
+    mutationFn: (body: MomentInput) => createMoment(contentId, body),
+    onSuccess: refresh,
+    retry: false,
+  });
+  const update = useMutation({
+    gcTime: 0,
+    mutationFn: ({
+      momentId,
+      body,
+    }: {
+      momentId: number;
+      body: MomentUpdate;
+    }) => updateMoment(momentId, body),
+    onSuccess: refresh,
+    retry: false,
+  });
+  const remove = useMutation({
+    gcTime: 0,
+    mutationFn: deleteMoment,
+    onSuccess: refresh,
+    retry: false,
+  });
+  return { create, update, remove };
+};

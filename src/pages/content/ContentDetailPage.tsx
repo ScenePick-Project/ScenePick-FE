@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ContentHeader } from "@features/contentDetail/components/ContentHeader.tsx";
 import { ContentTabs } from "@features/contentDetail/components/ContentTabs.tsx";
 import {
@@ -59,6 +59,15 @@ const ContentDetailPage = () => {
         selectedSeasonNo={effectiveSeasonNo}
         onSeasonChange={(seasonNo) => setSelectedSeasonNo(seasonNo)}
       />
+
+      {content && (
+        <Link
+          to={"/content/" + contentId + "/moments"}
+          className="mt-8 inline-flex rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white hover:bg-violet-700 focus-visible:ring-4 focus-visible:ring-violet-200"
+        >
+          내 모먼트
+        </Link>
+      )}
 
       <section className="mt-20 pt-10">
         <ContentTabs
