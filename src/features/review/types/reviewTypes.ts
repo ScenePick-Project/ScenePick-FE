@@ -11,6 +11,12 @@ export interface ReviewCreatedDto {
   reviewId: number;
 }
 
+export interface ReviewLikeToggleDto {
+  reviewId: number;
+  isLiked: boolean;
+  likeCount: number;
+}
+
 export interface ReviewDto {
   reviewId: number;
   contentId: number;

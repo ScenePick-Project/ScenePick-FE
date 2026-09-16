@@ -9,6 +9,7 @@ import {
   deleteReview,
   getReview,
   getReviewList,
+  toggleReviewLike,
 } from "@features/review/api/reviewApi.ts";
 import { getReviewTrack } from "@features/review/api/reviewTrackApi.ts";
 import type {
@@ -16,6 +17,7 @@ import type {
   ReviewCreatedDto,
   ReviewDto,
   ReviewListCursorDto,
+  ReviewLikeToggleDto,
   ReviewSortBy,
   ReviewTrackDto,
 } from "@features/review/types/reviewTypes.ts";
@@ -44,6 +46,17 @@ export const useDeleteReview = () => {
       queryClient.invalidateQueries({
         queryKey: ["reviews"],
       });
+    },
+  });
+};
+
+export const useToggleReviewLike = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<ReviewLikeToggleDto, Error, number>({
+    mutationFn: toggleReviewLike,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 };
