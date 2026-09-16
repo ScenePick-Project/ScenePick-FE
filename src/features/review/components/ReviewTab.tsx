@@ -5,7 +5,7 @@ import { ReviewCreateModal } from "@features/review/components/ReviewCreateModal
 import { ReviewDetailModal } from "@features/review/components/ReviewDetailModal.tsx";
 import {
   useReviewList,
-  useReviewTrack,
+  useReviewTracks,
 } from "@features/review/hooks/useReview.ts";
 import type {
   ReviewDto,
@@ -24,29 +24,31 @@ interface ReviewTabProps {
 interface ReviewCardProps {
   review: ReviewDto;
   hideSpoilers: boolean;
+  trackName?: string;
   onClick: (reviewId: number) => void;
 }
 
 interface ReviewTrackBadgeProps {
-  trackId: string;
+  trackName: string;
 }
 
-const ReviewTrackBadge = ({ trackId }: ReviewTrackBadgeProps) => {
-  const { data: track } = useReviewTrack(trackId);
-
+const ReviewTrackBadge = ({ trackName }: ReviewTrackBadgeProps) => {
   return (
     <span className="inline-flex max-w-full items-center gap-2 rounded-xl bg-violet-50 px-3.5 py-2 text-sm font-semibold text-violet-600">
       <span className="text-[15px] leading-none" aria-hidden="true">
         ♪
       </span>
-      <span className="truncate">
-        {track?.trackName ?? "사운드트랙 첨부"}
-      </span>
+      <span className="truncate">{trackName}</span>
     </span>
   );
 };
 
-const ReviewCard = ({ review, hideSpoilers, onClick }: ReviewCardProps) => {
+const ReviewCard = ({
+  review,
+  hideSpoilers,
+  trackName,
+  onClick,
+}: ReviewCardProps) => {
   const thumbnailUrl = getYoutubeThumbnailUrl(review.youtubeId);
   const isSpoilerHidden = review.isSpoiler && hideSpoilers;
 
@@ -104,9 +106,9 @@ const ReviewCard = ({ review, hideSpoilers, onClick }: ReviewCardProps) => {
               </p>
             </div>
 
-            {review.trackId && (
+            {trackName && (
               <div className="mt-2.5 flex flex-wrap items-center gap-2.5 pb-1">
-                <ReviewTrackBadge trackId={review.trackId} />
+                <ReviewTrackBadge trackName={trackName} />
               </div>
             )}
           </div>
@@ -157,6 +159,12 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
     () => data?.pages.flatMap((page) => page.reviewList) ?? [],
     [data],
   );
+  const trackIds = useMemo(
+    () =>
+      [...new Set(reviewList.flatMap((review) => (review.trackId ? [review.trackId] : [])))],
+    [reviewList],
+  );
+  const { data: reviewTracks } = useReviewTracks(trackIds);
 
   return (
     <div className="space-y-6">
@@ -228,6 +236,11 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
                 key={review.reviewId}
                 review={review}
                 hideSpoilers={hideSpoilers}
+                trackName={
+                  review.trackId
+                    ? reviewTracks?.get(review.trackId)?.trackName
+                    : undefined
+                }
                 onClick={setSelectedReviewId}
               />
             ))}

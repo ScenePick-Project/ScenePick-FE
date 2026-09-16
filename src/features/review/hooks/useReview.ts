@@ -11,7 +11,10 @@ import {
   getReviewList,
   toggleReviewLike,
 } from "@features/review/api/reviewApi.ts";
-import { getReviewTrack } from "@features/review/api/reviewTrackApi.ts";
+import {
+  getReviewTrack,
+  getReviewTracks,
+} from "@features/review/api/reviewTrackApi.ts";
 import type {
   ReviewCreateDto,
   ReviewCreatedDto,
@@ -94,6 +97,15 @@ export const useReviewTrack = (trackId?: string | null) => {
     queryKey: ["reviews", "track", trackId],
     queryFn: () => getReviewTrack(trackId as string),
     enabled: !!trackId,
+    staleTime: 1000 * 60 * 10,
+  });
+};
+
+export const useReviewTracks = (trackIds: string[]) => {
+  return useQuery<Map<string, ReviewTrackDto>, Error>({
+    queryKey: ["reviews", "tracks", trackIds],
+    queryFn: () => getReviewTracks(trackIds),
+    enabled: trackIds.length > 0,
     staleTime: 1000 * 60 * 10,
   });
 };
