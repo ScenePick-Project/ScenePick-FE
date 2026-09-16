@@ -29,7 +29,7 @@ export interface ReviewDto {
 export interface ReviewListCursorDto {
   createdAt: string;
   reviewId: number;
-  likeCount: number;
+  likeCount: number | null;
 }
 
 export interface ReviewSliceDto {
@@ -38,10 +38,14 @@ export interface ReviewSliceDto {
   hasNext: boolean;
 }
 
-export interface ReviewListQueryParams
-  extends Partial<ReviewListCursorDto> {
-  [key: string]: unknown;
+export type ReviewSortBy = "LATEST" | "POPULAR";
+
+export interface ReviewListQueryParams extends Record<string, unknown> {
   size?: number;
+  sortBy?: ReviewSortBy;
+  cursorCreatedAt?: string;
+  cursorReviewId?: number;
+  cursorLikeCount?: number;
 }
 
 export interface ReviewTrackDto {

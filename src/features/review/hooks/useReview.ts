@@ -16,6 +16,7 @@ import type {
   ReviewCreatedDto,
   ReviewDto,
   ReviewListCursorDto,
+  ReviewSortBy,
   ReviewTrackDto,
 } from "@features/review/types/reviewTypes.ts";
 
@@ -47,13 +48,16 @@ export const useDeleteReview = () => {
   });
 };
 
-export const useReviewList = (contentId: number) => {
+export const useReviewList = (contentId: number, sortBy: ReviewSortBy) => {
   return useInfiniteQuery({
-    queryKey: ["reviews", contentId, "list"],
+    queryKey: ["reviews", contentId, "list", sortBy],
     queryFn: ({ pageParam }) =>
       getReviewList(contentId, {
         size: REVIEW_PAGE_SIZE,
-        ...(pageParam ?? {}),
+        sortBy,
+        cursorCreatedAt: pageParam?.createdAt,
+        cursorReviewId: pageParam?.reviewId,
+        cursorLikeCount: pageParam?.likeCount ?? undefined,
       }),
     initialPageParam: undefined as ReviewListCursorDto | undefined,
     getNextPageParam: (lastPage) => {
