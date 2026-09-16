@@ -19,7 +19,7 @@ export default function RecommendationSection() {
   } else if (
     unauthorized(user.error) ||
     (user.isSuccess && !user.data.userId) ||
-    unauthorized(recommendations.error)
+    (user.isSuccess && unauthorized(recommendations.error))
   ) {
     content = (
       <div>
