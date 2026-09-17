@@ -3,6 +3,7 @@ import type {
   ReviewCreateDto,
   ReviewCreatedDto,
   ReviewDto,
+  ReviewLikeToggleDto,
   ReviewListQueryParams,
   ReviewSliceDto,
 } from "@features/review/types/reviewTypes.ts";
@@ -58,5 +59,16 @@ export const deleteReview = (reviewId: number) => {
   return request<null>({
     method: "DELETE",
     url: `/reviews/${reviewId}`,
+  });
+};
+
+/**
+ * 리뷰 좋아요를 토글합니다.
+ * @param reviewId 리뷰 ID
+ */
+export const toggleReviewLike = (reviewId: number) => {
+  return request<ReviewLikeToggleDto>({
+    method: "POST",
+    url: `/reviews/${reviewId}/like`,
   });
 };

@@ -5,9 +5,12 @@ import { ReviewCreateModal } from "@features/review/components/ReviewCreateModal
 import { ReviewDetailModal } from "@features/review/components/ReviewDetailModal.tsx";
 import {
   useReviewList,
-  useReviewTrack,
+  useReviewTracks,
 } from "@features/review/hooks/useReview.ts";
-import type { ReviewDto } from "@features/review/types/reviewTypes.ts";
+import type {
+  ReviewDto,
+  ReviewSortBy,
+} from "@features/review/types/reviewTypes.ts";
 import {
   formatReviewDate,
   getYoutubeThumbnailUrl,
@@ -20,30 +23,34 @@ interface ReviewTabProps {
 
 interface ReviewCardProps {
   review: ReviewDto;
+  hideSpoilers: boolean;
+  trackName?: string;
   onClick: (reviewId: number) => void;
 }
 
 interface ReviewTrackBadgeProps {
-  trackId: string;
+  trackName: string;
 }
 
-const ReviewTrackBadge = ({ trackId }: ReviewTrackBadgeProps) => {
-  const { data: track } = useReviewTrack(trackId);
-
+const ReviewTrackBadge = ({ trackName }: ReviewTrackBadgeProps) => {
   return (
     <span className="inline-flex max-w-full items-center gap-2 rounded-xl bg-violet-50 px-3.5 py-2 text-sm font-semibold text-violet-600">
       <span className="text-[15px] leading-none" aria-hidden="true">
         ♪
       </span>
-      <span className="truncate">
-        {track?.trackName ?? "사운드트랙 첨부"}
-      </span>
+      <span className="truncate">{trackName}</span>
     </span>
   );
 };
 
-const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
+const ReviewCard = ({
+  review,
+  hideSpoilers,
+  trackName,
+  onClick,
+}: ReviewCardProps) => {
   const thumbnailUrl = getYoutubeThumbnailUrl(review.youtubeId);
+  const isSpoilerHidden = review.isSpoiler && hideSpoilers;
 
   return (
     <button
@@ -92,21 +99,21 @@ const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
             <div className="relative min-h-[62px] flex-1">
               <p
                 className={`line-clamp-2 break-words text-[15px] leading-[1.65rem] text-slate-700 ${
-                  review.isSpoiler ? "select-none blur-sm" : ""
+                  isSpoilerHidden ? "select-none blur-sm" : ""
                 }`}
               >
                 {review.reviewBody}
               </p>
             </div>
 
-            {review.trackId && (
+            {trackName && (
               <div className="mt-2.5 flex flex-wrap items-center gap-2.5 pb-1">
-                <ReviewTrackBadge trackId={review.trackId} />
+                <ReviewTrackBadge trackName={trackName} />
               </div>
             )}
           </div>
 
-          {review.isSpoiler && (
+          {isSpoilerHidden && (
             <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
               <span className="whitespace-nowrap rounded-full border border-slate-200 bg-white/95 px-6 py-2.5 text-sm font-semibold text-slate-600 shadow-sm backdrop-blur-sm">
                 스포일러가 포함된 리뷰입니다.
@@ -137,6 +144,8 @@ const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
 export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
+  const [hideSpoilers, setHideSpoilers] = useState(true);
+  const [sortBy, setSortBy] = useState<ReviewSortBy>("LATEST");
   const {
     data,
     isLoading,
@@ -144,16 +153,22 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useReviewList(contentId);
+  } = useReviewList(contentId, sortBy);
 
   const reviewList = useMemo(
     () => data?.pages.flatMap((page) => page.reviewList) ?? [],
     [data],
   );
+  const trackIds = useMemo(
+    () =>
+      [...new Set(reviewList.flatMap((review) => (review.trackId ? [review.trackId] : [])))],
+    [reviewList],
+  );
+  const { data: reviewTracks } = useReviewTracks(trackIds);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h3 className="text-xl font-bold text-gray-900">리뷰</h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -162,9 +177,32 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
               : "첫 감상과 인상 깊은 장면을 리뷰로 남겨보세요."}
           </p>
         </div>
-        <Button size="lg" onClick={() => setIsModalOpen(true)}>
-          리뷰 작성
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant={hideSpoilers ? "accent" : "secondary"}
+            shape="full"
+            aria-pressed={hideSpoilers}
+            onClick={() => setHideSpoilers((current) => !current)}
+          >
+            {hideSpoilers ? "스포일러 숨김" : "스포일러 표시"}
+          </Button>
+          <label className="sr-only" htmlFor="review-sort">
+            리뷰 정렬
+          </label>
+          <select
+            id="review-sort"
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value as ReviewSortBy)}
+            className="h-9 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <option value="LATEST">최신순</option>
+            <option value="POPULAR">인기순</option>
+          </select>
+          <Button size="lg" onClick={() => setIsModalOpen(true)}>
+            리뷰 작성
+          </Button>
+        </div>
       </div>
 
       {isLoading && (
@@ -197,6 +235,12 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
               <ReviewCard
                 key={review.reviewId}
                 review={review}
+                hideSpoilers={hideSpoilers}
+                trackName={
+                  review.trackId
+                    ? reviewTracks?.get(review.trackId)?.trackName
+                    : undefined
+                }
                 onClick={setSelectedReviewId}
               />
             ))}

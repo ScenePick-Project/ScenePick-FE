@@ -6,6 +6,7 @@ import {
   useDeleteReview,
   useReviewDetail,
   useReviewTrack,
+  useToggleReviewLike,
 } from "@features/review/hooks/useReview.ts";
 import {
   formatReviewClipRange,
@@ -45,6 +46,8 @@ export const ReviewDetailModal = ({
   );
   const { mutateAsync: deleteReviewMutate, isPending: isDeleting } =
     useDeleteReview();
+  const { mutateAsync: toggleReviewLikeMutate, isPending: isTogglingLike } =
+    useToggleReviewLike();
 
   useEffect(() => {
     if (!open) {
@@ -109,6 +112,17 @@ export const ReviewDetailModal = ({
     } catch (error) {
       console.error(error);
       alert("리뷰 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleToggleReviewLike = async () => {
+    if (!review) return;
+
+    try {
+      await toggleReviewLikeMutate(review.reviewId);
+    } catch (error) {
+      console.error(error);
+      alert("좋아요 처리에 실패했습니다.");
     }
   };
 
@@ -331,11 +345,19 @@ export const ReviewDetailModal = ({
                       <div className="flex flex-wrap items-center gap-4">
                         <button
                           type="button"
+                          onClick={handleToggleReviewLike}
+                          disabled={isTogglingLike}
+                          aria-pressed={review.isLikedByCurrentUser}
+                          aria-label={
+                            review.isLikedByCurrentUser
+                              ? "리뷰 좋아요 취소"
+                              : "리뷰 좋아요"
+                          }
                           className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-rose-500 shadow-sm transition ${
                             review.isLikedByCurrentUser
                               ? "border-rose-300 bg-rose-50"
                               : "border-rose-200 bg-white"
-                          }`}
+                          } disabled:cursor-not-allowed disabled:opacity-50`}
                         >
                           <span className="text-lg leading-none">♥</span>
                           <span className="text-[24px] font-black leading-none">

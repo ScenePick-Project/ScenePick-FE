@@ -1,14 +1,12 @@
 import type { ReviewTrackDto } from "@features/review/types/reviewTypes.ts";
 
-/**
- * iTunes API를 통해 첨부된 트랙 정보를 조회합니다.
- * @param trackId iTunes 트랙 ID
- * @returns 조회된 트랙 정보
- */
-export const getReviewTrack = async (trackId: string) => {
+export const getReviewTracks = async (trackIds: string[]) => {
+  const uniqueTrackIds = [...new Set(trackIds)];
+  if (uniqueTrackIds.length === 0) return new Map<string, ReviewTrackDto>();
+
   const response = await fetch(
     `https://itunes.apple.com/lookup?id=${encodeURIComponent(
-      trackId,
+      uniqueTrackIds.join(","),
     )}&entity=song&country=KR`,
   );
 
@@ -17,5 +15,17 @@ export const getReviewTrack = async (trackId: string) => {
   }
 
   const data = (await response.json()) as { results?: ReviewTrackDto[] };
-  return data.results?.[0] ?? null;
+  return new Map(
+    (data.results ?? []).map((track) => [String(track.trackId), track]),
+  );
+};
+
+/**
+ * iTunes API를 통해 첨부된 트랙 정보를 조회합니다.
+ * @param trackId iTunes 트랙 ID
+ * @returns 조회된 트랙 정보
+ */
+export const getReviewTrack = async (trackId: string) => {
+  const tracks = await getReviewTracks([trackId]);
+  return tracks.get(trackId) ?? null;
 };
