@@ -8,6 +8,7 @@ import LoginPage from "@pages/login/LoginPage.tsx";
 import { RequireAuth } from "@shared/RequireAuth.tsx";
 import OAuthCallback from "@pages/auth/OAuthCallback.tsx";
 import MyPage from "@pages/mypage/MyPage.tsx";
+import MomentPage from "@pages/moment/MomentPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -27,6 +28,7 @@ export default function AppRouter() {
           <Route path="/drama" />
           <Route path="/ost" />
           <Route path="/content/:id" element={<ContentDetailPage />} />
+          <Route path="/content/:contentId/moments" element={<MomentPage />} />
 
           {/* 로그인이 필요한 페이지 */}
           <Route element={<RequireAuth />}>
