@@ -7,7 +7,7 @@ export const getReviewTracks = async (trackIds: string[]) => {
   const response = await fetch(
     `https://itunes.apple.com/lookup?id=${encodeURIComponent(
       uniqueTrackIds.join(","),
-    )}&entity=song&country=KR`,
+    )}&entity=song&country=US`,
   );
 
   if (!response.ok) {

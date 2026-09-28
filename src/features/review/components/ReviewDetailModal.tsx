@@ -117,6 +117,10 @@ export const ReviewDetailModal = ({
 
   const handleToggleReviewLike = async () => {
     if (!review) return;
+    if (isOwnReview) {
+      alert("본인이 작성한 리뷰에는 좋아요를 누를 수 없습니다.");
+      return;
+    }
 
     try {
       await toggleReviewLikeMutate(review.reviewId);
@@ -130,7 +134,7 @@ export const ReviewDetailModal = ({
     <Modal
       open={open}
       onClose={onClose}
-      className="max-h-[calc(100vh-5.5rem)] max-w-[980px] overflow-hidden rounded-[36px] border border-white/70 bg-[linear-gradient(180deg,#f8fbff_0%,#f6f7fb_45%,#ffffff_100%)] shadow-[0_40px_120px_rgba(15,23,42,0.3)] overscroll-contain"
+      className="max-h-[calc(100vh-5.5rem)] max-w-[980px] rounded-[36px] border border-white/70 bg-[linear-gradient(180deg,#f8fbff_0%,#f6f7fb_45%,#ffffff_100%)] shadow-[0_40px_120px_rgba(15,23,42,0.3)] overscroll-contain"
     >
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute -left-16 top-24 h-56 w-56 rounded-full bg-sky-200/30 blur-3xl" />
