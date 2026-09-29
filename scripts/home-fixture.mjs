@@ -70,7 +70,14 @@ const server = createServer(async (req, res) => {
       reply(null, 500);
       return;
     }
-    const count = scenario === "empty" ? 0 : scenario === "three" ? 3 : 10;
+    const count =
+      scenario === "empty"
+        ? 0
+        : scenario === "three"
+          ? 3
+          : scenario === "one"
+            ? 1
+            : 10;
     reply({
       recommendationType: "RANDOM",
       contentList: Array.from({ length: count }, (_, i) => ({
