@@ -72,3 +72,12 @@ node --test tests/moment-input.test.mjs
 변경 전 전체 lint는 오류 0개, 기존 Navbar.tsx:19 미사용 error 경고 1개였다. 전역 인증/토큰 갱신 및 Navbar는 수정하지 않는다. fixture의 COMMON401 검증은 JWT4011 토큰 갱신 검증을 대체하지 않는다.
 
 실제 BE 통합 결과는 별도로 기록한다. 기존 사용자 DB를 초기화하거나 데이터를 적재하지 않는다. 빈 DB의 빈 목록 응답은 정상이며, 후보가 부족해도 가짜 카드로 채우지 않는다.
+
+### 실제 BE 통합 — 2026-09-29
+
+- FE: localhost:5173, 실제 BE #63 수정 빌드: localhost:8080. API fixture 없이 실제 Controller/보안 필터/서비스/MyBatis/Oracle을 사용했다.
+- 기존 scenepick-db와 별개인 임시 컨테이너 scenepick-fe39-test(Oracle 21, loopback 11539, HOME_TEST)에 기존 Flyway migration을 적용했다. 기존 사용자 DB는 조회·변경하지 않았다.
+- 비로그인 빈 DB에서 정상 빈 목록 안내를 확인했다. 임시 작품 12개를 준비한 뒤 비로그인 홈에서 실제 응답의 카드 10개를 확인했다.
+- 임시 계정을 실제 회원가입 API로 만들고 FE 로그인 폼으로 로그인했다. 로그인 후 카드 10개, 마이페이지 설정에서 로그아웃한 뒤 로그인 버튼과 카드 10개가 함께 표시되는 것을 확인했다.
+- 포스터 파일만 로컬 SVG 서버를 사용했다. 추천/사용자 API는 실제 BE이며 외부 TMDB·S3·OAuth 통합은 이번 검증 범위 밖이다.
+- 타입 검사, 프로덕션 빌드, 전체 lint 통과(기존 Navbar 경고 1개), 기존 Node 테스트 3개 통과. 독립 Standards/Spec 리뷰 모두 조치 사항 0건.
