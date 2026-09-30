@@ -1,53 +1,22 @@
-import axios from "axios";
-import { Link } from "react-router-dom";
 import { Button } from "@components/ui/Button.tsx";
-import { useCurrentUser } from "@features/user/hooks/useUser.ts";
 import { useHomeRecommendations } from "@features/home/hooks/useHomeRecommendations.ts";
 import PosterCard from "@features/home/components/PosterCard.tsx";
 
 export default function RecommendationSection() {
-  const user = useCurrentUser();
-  const recommendations = useHomeRecommendations(
-    user.isSuccess && !!user.data.userId,
-  );
-  const unauthorized = (error: unknown) =>
-    axios.isAxiosError(error) && error.response?.status === 401;
+  const recommendations = useHomeRecommendations();
   let content;
 
-  if (user.isPending) {
-    content = <p role="status">로그인 상태를 확인하고 있어요</p>;
-  } else if (
-    unauthorized(user.error) ||
-    (user.isSuccess && !user.data.userId) ||
-    (user.isSuccess && unauthorized(recommendations.error))
-  ) {
-    content = (
-      <div>
-        <p>로그인하고 추천 작품을 만나보세요</p>
-        <Button
-          asChild
-          className="mt-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          <Link to="/login?redirect=%2F">로그인</Link>
-        </Button>
-      </div>
-    );
-  } else if (user.isError || recommendations.isError) {
-    const failedQuery = user.isError ? user : recommendations;
+  if (recommendations.isError) {
     content = (
       <div role="alert">
-        <p>
-          {user.isError
-            ? "로그인 상태를 확인하지 못했어요"
-            : "추천 작품을 불러오지 못했어요"}
-        </p>
+        <p>추천 작품을 불러오지 못했어요</p>
         <Button
           type="button"
           className="mt-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-          disabled={failedQuery.isFetching}
-          onClick={() => void failedQuery.refetch()}
+          disabled={recommendations.isFetching}
+          onClick={() => void recommendations.refetch()}
         >
-          {failedQuery.isFetching ? "다시 확인하는 중…" : "다시 시도"}
+          {recommendations.isFetching ? "다시 확인하는 중…" : "다시 시도"}
         </Button>
       </div>
     );
