@@ -49,6 +49,7 @@ export const useDeleteReview = () => {
       queryClient.invalidateQueries({
         queryKey: ["reviews"],
       });
+      queryClient.invalidateQueries({ queryKey: ["mypage"] });
     },
   });
 };

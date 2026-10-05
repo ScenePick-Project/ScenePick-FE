@@ -15,6 +15,7 @@ export const SettingsMenuModal = ({
       <div className="flex justify-between items-center p-5 border-b border-gray-100">
         <h2 className="text-lg font-bold text-gray-900">설정</h2>
         <Button
+          aria-label="설정 닫기"
           onClick={onClose}
           variant={"ghost"}
           className="text-gray-400 hover:text-gray-600 transition-colors"
