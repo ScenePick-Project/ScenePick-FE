@@ -133,6 +133,10 @@ const server = createServer(async (req, res) => {
         for await (const chunk of req) data += chunk;
         const body = JSON.parse(data);
         requests.at(-1).body = body;
+        if (scenario === "save-expired") {
+          reply(null, 401);
+          return;
+        }
         if (scenario === "save-error") {
           reply(null, 500);
           return;

@@ -26,21 +26,22 @@ Invoke-RestMethod 'http://127.0.0.1:4180/scenario?name=populated'
 Invoke-RestMethod 'http://127.0.0.1:4180/status' | ConvertTo-Json -Depth 6
 ```
 
-| 시나리오 | 기대 결과 |
-| --- | --- |
-| populated | 프로필/팔로잉2·팔로워3, 평가4개, 1·4.5·5점 비율25·25·50%, 6개 목록 및 다음 페이지 |
-| empty | 소개 없음, 팔로우0, 별점0, 빈 목록; 예시 수치 없음 |
-| long | 30자 닉네임 및 긴 공백 없는 소개가 줄바꿈됨 |
-| broken | 프로필 이미지 실패 후 기본 프로필 표시 |
-| loading | 데이터 조회를 기다리는 상태 표시 |
-| error | 500을 빈 목록으로 처리하지 않음, 오류 및 수동 재시도 |
-| retry | 리뷰 첫 요청 실패, 재시도 성공 |
-| next-error | 다음 페이지 실패 시 기존 항목 유지, 다음 페이지 재시도 성공 |
-| guest | 로그인으로 이동, 개인 API 요청 없음 |
-| expired | 개인 API 401 시 로그인 이동 |
-| banned | 개인 API 403 안내 |
-| save-error | 저장 실패 시 모달과 입력 유지 |
-| logout-error | 로그아웃 실패 시 안내 및 메뉴 유지 |
+| 시나리오     | 기대 결과                                                                         |
+| ------------ | --------------------------------------------------------------------------------- |
+| populated    | 프로필/팔로잉2·팔로워3, 평가4개, 1·4.5·5점 비율25·25·50%, 6개 목록 및 다음 페이지 |
+| empty        | 소개 없음, 팔로우0, 별점0, 빈 목록; 예시 수치 없음                                |
+| long         | 30자 닉네임 및 긴 공백 없는 소개가 줄바꿈됨                                       |
+| broken       | 프로필 이미지 실패 후 기본 프로필 표시                                            |
+| loading      | 데이터 조회를 기다리는 상태 표시                                                  |
+| error        | 500을 빈 목록으로 처리하지 않음, 오류 및 수동 재시도                              |
+| retry        | 리뷰 첫 요청 실패, 재시도 성공                                                    |
+| next-error   | 다음 페이지 실패 시 기존 항목 유지, 다음 페이지 재시도 성공                       |
+| guest        | 로그인으로 이동, 개인 API 요청 없음                                               |
+| expired      | 개인 API 401 시 로그인 이동                                                       |
+| banned       | 개인 API 403 안내                                                                 |
+| save-expired | 프로필 저장 중 401 시 로그인 이동                                                 |
+| save-error   | 저장 실패 시 모달과 입력 유지                                                     |
+| logout-error | 로그아웃 실패 시 안내 및 메뉴 유지                                                |
 
 각 목록은 /mypage/reviews, bookmarks, moments, album, following, followers로 이동한다. 일반 커서는 cursorCreatedAt+cursorId, 내 장면은 cursorCreatedAt+cursorMomentId이다. /status에서 요청에 소유자 userId가 없으며 내 장면에는 contentId 필터도 없는지 확인한다. 리뷰 카드는 작품 링크 및 기존 리뷰 상세 모달, 장면 카드는 기존 작품별 장면 화면에 연결한다. 사용자/곡 상세 페이지 또는 외부 음악 URL은 임의로 만들지 않는다.
 
@@ -54,6 +55,7 @@ http://127.0.0.1:4180/viewport?width=375 와 width=1280은 실제 CSS 폭의 ifr
 - 6개 목록 진입·다음 페이지·리뷰 상세 모달 통과. HTTP 커서와 소유자 필터 미포함 확인.
 - 프로필 두 진입점, Tab 순환, Escape/포커스 복귀, 공백 입력 저장 제한, 저장 오류 시 입력 보존 통과.
 - empty/long/broken/error/next-error/guest/expired/logout-error 시나리오 통과.
+- save-expired: 수정 전 일반 오류로 모달에 머무는 실패를 재현하고, 수정 후 로그인 이동 확인.
 - 로그아웃 실패 후 재시도 성공 및 홈 이동 통과.
 - node tests/moment-input.test.mjs: 기존3개 회귀 테스트 통과.
 - npm run build, npm run lint: 통과. 기존 Navbar 미사용 error 변수 경고1개.

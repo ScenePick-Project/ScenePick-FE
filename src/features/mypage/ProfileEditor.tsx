@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { getErrorStatus } from "@features/moment/api/momentApi.ts";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@components/ui/Button.tsx";
 import { updateProfile, type Profile } from "./mypageApi.ts";
@@ -31,6 +33,8 @@ export function ProfileEditor({
       if (previous instanceof HTMLElement) previous.focus();
     };
   }, []);
+  if (getErrorStatus(save.error) === 401)
+    return <Navigate replace to="/login?redirect=%2Fmypage" />;
   return (
     <form
       ref={form}
