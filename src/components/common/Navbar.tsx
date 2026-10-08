@@ -4,6 +4,7 @@ import { Logo } from "@components/common/Logo.tsx";
 import { useEffect, useState } from "react";
 import type { UserAuthResponseDto } from "@features/user/types/userType.ts";
 import { checkLogin } from "@features/user/api/userApi.ts";
+import defaultProfileImage from "@/assets/images/default-profile.png";
 
 export default function Navbar() {
   const [userAuth, setUserAuth] = useState<UserAuthResponseDto | null>(null);
@@ -71,10 +72,10 @@ export default function Navbar() {
 
         <nav className="flex gap-4 items-center">
           {loading ? null : isAuthed ? (
-            <Link to="/mypage" className="flex items-center">
+            <Link to="/mypage" aria-label="마이페이지" className="flex items-center">
               <img
-                src={""}
-                alt={"profile"}
+                src={defaultProfileImage}
+                alt=""
                 className="w-9 h-9 rounded-full border border-gray-200 object-cover"
               />
             </Link>
