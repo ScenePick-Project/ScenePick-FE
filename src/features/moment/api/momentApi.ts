@@ -9,7 +9,7 @@ import type {
 } from "../types/momentTypes.ts";
 
 export const getMoments = (
-  contentId: number,
+  contentId: number | undefined,
   youtubeId: string | null,
   cursor: MomentCursor | null,
 ) =>
@@ -17,7 +17,7 @@ export const getMoments = (
     method: "GET",
     url: "/me/moments",
     query: {
-      contentId,
+      ...(contentId !== undefined ? { contentId } : {}),
       size: 10,
       ...(youtubeId ? { youtubeId } : {}),
       ...(cursor

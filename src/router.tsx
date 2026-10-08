@@ -8,6 +8,7 @@ import LoginPage from "@pages/login/LoginPage.tsx";
 import { RequireAuth } from "@shared/RequireAuth.tsx";
 import OAuthCallback from "@pages/auth/OAuthCallback.tsx";
 import MyPage from "@pages/mypage/MyPage.tsx";
+import MyCollectionPage from "@pages/mypage/MyCollectionPage.tsx";
 import MomentPage from "@pages/moment/MomentPage.tsx";
 
 export default function AppRouter() {
@@ -33,6 +34,30 @@ export default function AppRouter() {
           {/* 로그인이 필요한 페이지 */}
           <Route element={<RequireAuth />}>
             <Route path="/mypage" element={<MyPage />} />
+            <Route
+              path="/mypage/reviews"
+              element={<MyCollectionPage key="reviews" kind="reviews" />}
+            />
+            <Route
+              path="/mypage/bookmarks"
+              element={<MyCollectionPage key="bookmarks" kind="bookmarks" />}
+            />
+            <Route
+              path="/mypage/moments"
+              element={<MyCollectionPage key="moments" kind="moments" />}
+            />
+            <Route
+              path="/mypage/album"
+              element={<MyCollectionPage key="album" kind="album" />}
+            />
+            <Route
+              path="/mypage/following"
+              element={<MyCollectionPage key="following" kind="following" />}
+            />
+            <Route
+              path="/mypage/followers"
+              element={<MyCollectionPage key="followers" kind="followers" />}
+            />
           </Route>
 
           {/* 없는 페이지로 갈 경우 */}
