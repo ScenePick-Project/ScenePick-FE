@@ -56,8 +56,39 @@ export const collections = {
 export type CollectionKind = keyof typeof collections;
 export const getProfile = () =>
   request<Profile>({ method: "GET", url: "/me/profile" });
-export const updateProfile = (body: Pick<Profile, "nickname" | "bio">) =>
-  request<null>({ method: "PATCH", url: "/me/profile", body });
+export const updateProfile = (
+  body: Pick<Profile, "nickname" | "bio"> & { imageKey?: string },
+) => request<null>({ method: "PATCH", url: "/me/profile", body });
+export const uploadProfileImage = async (file: File) => {
+  if (
+    !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+    file.size === 0 ||
+    file.size > 5 * 1024 * 1024
+  )
+    throw new Error("JPG, PNG, WebP 형식의 5MB 이하 사진을 선택해주세요.");
+  const signed = await request<{ keyName: string; url: string }>({
+    method: "POST",
+    url: "/s3/presigned/upload/PROFILES",
+    body: {
+      fileName:
+        "profile." +
+        { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[
+          file.type
+        ],
+      contentType: file.type,
+    },
+  });
+  // Presigned S3 requests must not carry the application's authentication cookies.
+  const response = await fetch(signed.url, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+    credentials: "omit",
+  });
+  if (!response.ok)
+    throw new Error("사진 업로드에 실패했습니다. 다시 시도해주세요.");
+  return signed.keyName;
+};
 export const getRatings = () =>
   request<Ratings>({ method: "GET", url: "/me/rating-statistics" });
 export const getCollection = async (

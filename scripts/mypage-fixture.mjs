@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { setTimeout } from "node:timers/promises";
 import console from "node:console";
+import { Buffer } from "node:buffer";
 
 // HTTP-only local fixture. The application always uses its real request/Query code.
 let scenario = "populated",
@@ -10,8 +11,13 @@ let scenario = "populated",
   loggedOut = false;
 let profile;
 let deleted = new Set();
+let uploadedPhoto = null;
+let uploadedType = "image/png";
+let readNotices = new Set();
 function reset(name) {
   deleted = new Set();
+  uploadedPhoto = null;
+  readNotices = new Set();
   scenario = name;
   requests = [];
   failedNext = false;
@@ -41,7 +47,7 @@ const server = createServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, PATCH, POST, DELETE, OPTIONS",
+    "GET, PATCH, POST, PUT, DELETE, OPTIONS",
   );
   if (req.method === "OPTIONS") {
     res.writeHead(204).end();
@@ -85,6 +91,35 @@ const server = createServer(async (req, res) => {
       }),
     );
   };
+  if (url.pathname === "/api/v1/s3/presigned/upload/PROFILES") {
+    let data = "";
+    for await (const chunk of req) data += chunk;
+    uploadedType = JSON.parse(data).contentType;
+    reply({
+      keyName: "profiles/mypage-fixture/profile.png",
+      url: "http://127.0.0.1:4180/upload-profile",
+    });
+    return;
+  }
+  if (url.pathname === "/upload-profile") {
+    if (scenario === "upload-error") {
+      reply(null, 500);
+      return;
+    }
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    uploadedPhoto = Buffer.concat(chunks);
+    res.writeHead(200).end();
+    return;
+  }
+  if (url.pathname === "/profile-photo") {
+    if (!uploadedPhoto) {
+      res.writeHead(404).end();
+      return;
+    }
+    res.writeHead(200, { "Content-Type": uploadedType }).end(uploadedPhoto);
+    return;
+  }
   if (url.pathname === "/api/v1/user/me") {
     reply({
       userId: scenario === "guest" || loggedOut ? "" : profile.userId,
@@ -101,7 +136,18 @@ const server = createServer(async (req, res) => {
     return;
   }
   if (url.pathname === "/api/v1/home/recommendations") {
-    reply({ recommendationType: "RANDOM", contentList: [] });
+    reply({
+      recommendationType: "RANDOM",
+      contentList: Array.from(
+        { length: scenario === "empty" ? 0 : 10 },
+        (_, i) => ({
+          contentId: i + 1,
+          title: "추천 작품 " + (i + 1),
+          posterImageUrl: "",
+          contentType: "MOVIE",
+        }),
+      ),
+    });
     return;
   }
   if (url.pathname.startsWith("/api/v1/me/")) {
@@ -116,6 +162,37 @@ const server = createServer(async (req, res) => {
     if (scenario === "loading") await setTimeout(1800);
     if (scenario === "error") {
       reply(null, 500);
+      return;
+    }
+    if (url.pathname === "/api/v1/me/notifications/unread-count") {
+      reply({ count: scenario === "empty" ? 0 : 3 - readNotices.size });
+      return;
+    }
+    if (url.pathname.match(/^\/api\/v1\/me\/notifications\/\d+\/read$/)) {
+      if (scenario === "read-error") {
+        reply(null, 500);
+        return;
+      }
+      readNotices.add(Number(url.pathname.split("/").at(-2)));
+      reply(null);
+      return;
+    }
+    if (url.pathname === "/api/v1/me/notifications") {
+      const next = url.searchParams.has("cursorId");
+      const ids = scenario === "empty" ? [] : next ? [1] : [3, 2];
+      reply({
+        items: ids.map((id) => ({
+          notificationId: id,
+          type: id === 2 ? "REVIEW_BOOKMARK" : "REVIEW_LIKE",
+          reviewId: id === 1 ? null : 101,
+          contentId: id === 1 ? null : 101,
+          actorNickname: "이웃 " + id,
+          createdAt,
+          readAt: readNotices.has(id) ? createdAt : null,
+        })),
+        nextCursor: !next && ids.length ? { createdAt, id: 2 } : null,
+        hasNext: !next && ids.length > 0,
+      });
       return;
     }
     if (
@@ -150,6 +227,9 @@ const server = createServer(async (req, res) => {
           return;
         }
         profile = { ...profile, ...body };
+        if (body.imageKey && uploadedPhoto)
+          profile.imageUrl =
+            "http://127.0.0.1:4180/profile-photo?version=" + Date.now();
         reply(null);
         return;
       }
