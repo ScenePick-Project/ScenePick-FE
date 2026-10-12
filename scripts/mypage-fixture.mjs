@@ -102,6 +102,7 @@ const server = createServer(async (req, res) => {
     return;
   }
   if (url.pathname === "/upload-profile") {
+    if (scenario === "upload-loading") await setTimeout(1800);
     if (scenario === "upload-error") {
       reply(null, 500);
       return;

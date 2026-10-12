@@ -12,9 +12,11 @@ import {
 export function ProfileEditor({
   profile,
   onClose,
+  onSavingChange,
 }: {
   profile: Profile;
   onClose: () => void;
+  onSavingChange: (saving: boolean) => void;
 }) {
   const [nickname, setNickname] = useState(profile.nickname);
   const [bio, setBio] = useState(profile.bio ?? "");
@@ -44,6 +46,10 @@ export function ProfileEditor({
       onClose();
     },
   });
+  useEffect(() => {
+    onSavingChange(save.isPending);
+    return () => onSavingChange(false);
+  }, [save.isPending, onSavingChange]);
   useEffect(() => {
     const previous = document.activeElement;
     form.current?.querySelector("input")?.focus();
@@ -109,6 +115,7 @@ export function ProfileEditor({
         id="profile-nickname"
         value={nickname}
         maxLength={30}
+        readOnly={save.isPending}
         required
         onChange={(e) => setNickname(e.target.value)}
         className="mt-2 w-full rounded-lg border p-3"
@@ -120,6 +127,7 @@ export function ProfileEditor({
         id="profile-bio"
         value={bio}
         maxLength={500}
+        readOnly={save.isPending}
         rows={4}
         onChange={(e) => setBio(e.target.value)}
         className="mt-2 w-full resize-y rounded-lg border p-3"

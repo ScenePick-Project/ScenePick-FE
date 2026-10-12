@@ -20,6 +20,7 @@ export default function MyPage() {
   const userId = user.data?.userId;
   const client = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
   const [settings, setSettings] = useState(false);
   const [imageFailed, setImageFailed] = useState<string | null>(null);
   const [logoutError, setLogoutError] = useState(false);
@@ -286,8 +287,18 @@ export default function MyPage() {
         )}
       </Modal>
       {editing && data && (
-        <Modal open onClose={() => setEditing(false)} className="max-w-md p-6">
-          <ProfileEditor profile={data} onClose={() => setEditing(false)} />
+        <Modal
+          open
+          onClose={() => {
+            if (!profileSaving) setEditing(false);
+          }}
+          className="max-w-md p-6"
+        >
+          <ProfileEditor
+            profile={data}
+            onSavingChange={setProfileSaving}
+            onClose={() => setEditing(false)}
+          />
         </Modal>
       )}
     </div>

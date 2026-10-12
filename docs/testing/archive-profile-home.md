@@ -1,4 +1,4 @@
-# 홈·GNB·마이페이지 추가 개선
+# 홈·GNB·마이페이지 추가 개선 (#46)
 
 ## 사용자 요구와 범위
 
@@ -24,8 +24,10 @@ http://127.0.0.1:5180/ 에서 화살표와 알림을 확인한다. /mypage 프�
 - 홈 10개 목록 양옆 화살표, 다음 이동 후 끝 버튼 비활성화 확인.
 - 종 버튼의 미읽음 3개, 좋아요/북마크 문구, 다음 페이지 삭제 리뷰 표시, 읽음 후 2개로 감소, 닫기 후 포커스 복귀 확인.
 - 파일 선택 미리보기 → presigned POST → 바이너리 PUT → imageKey PATCH → 프로필 GET 순서 확인. GNB와 마이페이지 이미지 URL 일치 및 실제 이미지 로딩 확인.
+- upload-error: 파일 미리보기·입력·모달 유지 및 오류 안내 확인. upload-loading: 저장 중 Escape 닫기 차단과 입력 변경 제한, 완료 후 정상 닫기 확인.
+- read-error: 읽음 실패 시 배지·목록 유지 확인. 375px iframe의 실제 본문 width/scrollWidth가 각각360/360이며 긴 문구·GNB에 가로 넘침이 없음을 확인.
 - `node --test tests/moment-input.test.mjs tests/profile-upload.test.mjs`: 6개 통과. 파일 제한·쿠키 없는 PUT·업로드 실패 시 키 미반환 검증.
-- FE 빌드·린트 실행. 최종 결과는 handoff 기록에 남긴다.
+- `npm run build`, `npm run lint`: 오류·경고 없이 통과(빌드의 기존 Browserslist DB 안내 제외). 최종 리뷰: Spec 결함0, Standards P3 포커스 순환 중복1(후속 공통 Modal 검토).
 
 ## 미검증·의존성
 

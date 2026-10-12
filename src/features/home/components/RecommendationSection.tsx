@@ -25,7 +25,7 @@ export default function RecommendationSection() {
     const observer = new ResizeObserver(updateEdges);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [count]);
+  }, [count, recommendations.isError, recommendations.isPending]);
   let content;
 
   if (recommendations.isError) {
