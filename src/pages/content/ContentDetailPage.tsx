@@ -7,10 +7,12 @@ import {
   useContentSeasons,
 } from "@features/contentDetail/hooks/useContentDetail.ts";
 import { sortSeasons } from "@features/contentDetail/utils/seasonUtils.ts";
+import { useCurrentUser } from "@features/user/hooks/useUser.ts";
 
 const ContentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const contentId = Number(id);
+  const user = useCurrentUser();
   const { data: content, isLoading: isContentLoading } =
     useContentBasic(contentId);
   const { data: seasonData, isLoading: isSeasonLoading } =
@@ -60,7 +62,7 @@ const ContentDetailPage = () => {
         onSeasonChange={(seasonNo) => setSelectedSeasonNo(seasonNo)}
       />
 
-      {content && (
+      {content && user.isSuccess && !!user.data.userId && (
         <Link
           to={"/content/" + contentId + "/moments"}
           className="mt-8 inline-flex rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white hover:bg-violet-700 focus-visible:ring-4 focus-visible:ring-violet-200"
