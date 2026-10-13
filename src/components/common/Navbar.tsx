@@ -5,10 +5,22 @@ import { useEffect, useState } from "react";
 import type { UserAuthResponseDto } from "@features/user/types/userType.ts";
 import { checkLogin } from "@features/user/api/userApi.ts";
 import defaultProfileImage from "@/assets/images/default-profile.png";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile } from "@features/mypage/mypageApi.ts";
+import { NotificationBell } from "@features/user/components/NotificationBell.tsx";
 
 export default function Navbar() {
   const [userAuth, setUserAuth] = useState<UserAuthResponseDto | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const profile = useQuery({
+    queryKey: ["mypage", userAuth?.userId, "profile"],
+    queryFn: getProfile,
+    enabled: !!userAuth?.userId,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchInterval: 8 * 60 * 1000,
+  });
 
   useEffect(() => {
     // 토큰 존재 여부를 서버에 물어봄
@@ -17,7 +29,7 @@ export default function Navbar() {
       try {
         const data = await checkLogin();
         setUserAuth(data);
-      } catch (error) {
+      } catch {
         setUserAuth(null);
       } finally {
         setLoading(false);
@@ -33,13 +45,13 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-white border-b border-gray-200 z-50 flex items-center px-4">
       <div className="flex items-center justify-between w-full max-w-screen-xl mx-auto">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 sm:gap-8">
           {" "}
           {/* 로고와 메뉴 사이 간격 조절 */}
           <Link to="/" className="flex items-center">
             <Logo />
           </Link>
-          <nav className="flex gap-6 items-center">
+          <nav className="flex gap-1 sm:gap-6 items-center whitespace-nowrap text-xs sm:text-base">
             <Link
               to="/movie"
               className="text-gray-600 hover:text-blue-600 font-semibold transition-colors"
@@ -70,15 +82,28 @@ export default function Navbar() {
           </nav>
         </div>
 
-        <nav className="flex gap-4 items-center">
+        <nav className="flex gap-1 sm:gap-4 items-center">
           {loading ? null : isAuthed ? (
-            <Link to="/mypage" aria-label="마이페이지" className="flex items-center">
-              <img
-                src={defaultProfileImage}
-                alt=""
-                className="w-9 h-9 rounded-full border border-gray-200 object-cover"
-              />
-            </Link>
+            <>
+              {userAuth.userId && <NotificationBell userId={userAuth.userId} />}
+              <Link
+                to="/mypage"
+                aria-label="마이페이지"
+                className="flex items-center"
+              >
+                <img
+                  src={
+                    profile.data?.imageUrl &&
+                    failedImage !== profile.data.imageUrl
+                      ? profile.data.imageUrl
+                      : defaultProfileImage
+                  }
+                  onError={() => setFailedImage(profile.data?.imageUrl ?? null)}
+                  alt=""
+                  className="w-9 h-9 rounded-full border border-gray-200 object-cover"
+                />
+              </Link>
+            </>
           ) : (
             <Button variant={"ghost"} asChild>
               <Link to={"/login"}>로그인 / 회원가입</Link>

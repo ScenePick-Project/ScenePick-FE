@@ -35,7 +35,7 @@ export default function MyCollectionPage({ kind }: { kind: CollectionKind }) {
   const items = list.data?.pages.flatMap((page) => page.items) ?? [];
   return (
     <section className="mx-auto min-h-[70vh] max-w-5xl px-4 py-8 sm:px-8">
-      <Link to="/mypage" className="text-sm text-violet-600 underline">
+      <Link to="/mypage" className="text-sm text-primary underline">
         마이페이지로 돌아가기
       </Link>
       <h1 className="mb-8 mt-5 text-2xl font-bold">
@@ -74,7 +74,7 @@ export default function MyCollectionPage({ kind }: { kind: CollectionKind }) {
               <li key={item.reviewId} className="min-w-0 rounded-xl border p-5">
                 <Link
                   to={"/content/" + item.contentId}
-                  className="break-all font-bold text-violet-600 hover:underline"
+                  className="break-all font-bold text-primary hover:underline"
                 >
                   {item.title}
                 </Link>
@@ -106,7 +106,7 @@ export default function MyCollectionPage({ kind }: { kind: CollectionKind }) {
                 </p>
                 <Link
                   to={"/content/" + item.contentId + "/moments"}
-                  className="mt-4 inline-block text-sm text-violet-600 underline"
+                  className="mt-4 inline-block text-sm text-primary underline"
                 >
                   작품의 장면 보기
                 </Link>

@@ -20,6 +20,7 @@ export default function MyPage() {
   const userId = user.data?.userId;
   const client = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
   const [settings, setSettings] = useState(false);
   const [imageFailed, setImageFailed] = useState<string | null>(null);
   const [logoutError, setLogoutError] = useState(false);
@@ -104,7 +105,7 @@ export default function MyPage() {
               type="button"
               aria-label="프로필 수정"
               onClick={() => setEditing(true)}
-              className="absolute bottom-0 right-0 rounded-full border bg-white p-2 text-slate-600 shadow-sm focus-visible:ring-2 focus-visible:ring-violet-500"
+              className="absolute bottom-0 right-0 rounded-full border bg-white p-2 text-slate-600 shadow-sm focus-visible:ring-2 focus-visible:ring-primary"
             >
               <FiEdit2 aria-hidden="true" />
             </button>
@@ -124,14 +125,14 @@ export default function MyPage() {
             </div>
             <p className="mt-2 flex flex-wrap gap-2 text-sm text-slate-600">
               <Link
-                className="rounded hover:text-violet-600 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="rounded hover:text-primary focus-visible:ring-2 focus-visible:ring-primary"
                 to="/mypage/following"
               >
                 팔로잉 {data.followingCount}
               </Link>
               <span aria-hidden="true">|</span>
               <Link
-                className="rounded hover:text-violet-600 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="rounded hover:text-primary focus-visible:ring-2 focus-visible:ring-primary"
                 to="/mypage/followers"
               >
                 팔로워 {data.followerCount}
@@ -153,7 +154,7 @@ export default function MyPage() {
               <Link
                 key={kind}
                 to={"/mypage/" + kind}
-                className="flex min-h-28 items-center justify-center rounded-xl bg-slate-100 px-3 text-center text-lg font-bold transition-colors hover:bg-violet-100 focus-visible:ring-2 focus-visible:ring-violet-500"
+                className="flex min-h-28 items-center justify-center rounded-xl bg-slate-100 px-3 text-center text-lg font-bold transition-colors hover:bg-gray-200 focus-visible:ring-2 focus-visible:ring-primary"
               >
                 {collections[kind].title}
               </Link>
@@ -207,7 +208,7 @@ export default function MyPage() {
                         %
                       </span>
                       <div
-                        className="rounded-t-lg bg-blue-400"
+                        className="rounded-t-lg bg-gray-400"
                         style={{
                           height:
                             (bucket.count /
@@ -286,8 +287,18 @@ export default function MyPage() {
         )}
       </Modal>
       {editing && data && (
-        <Modal open onClose={() => setEditing(false)} className="max-w-md p-6">
-          <ProfileEditor profile={data} onClose={() => setEditing(false)} />
+        <Modal
+          open
+          onClose={() => {
+            if (!profileSaving) setEditing(false);
+          }}
+          className="max-w-md p-6"
+        >
+          <ProfileEditor
+            profile={data}
+            onSavingChange={setProfileSaving}
+            onClose={() => setEditing(false)}
+          />
         </Modal>
       )}
     </div>
