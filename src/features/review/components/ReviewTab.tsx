@@ -1,4 +1,7 @@
 import { useMemo, useState } from "react";
+import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
+import { useCurrentUser } from "@features/user/hooks/useUser.ts";
 import { UserAvatarFallback } from "@components/common/UserAvatarFallback.tsx";
 import { Button } from "@components/ui/Button.tsx";
 import { ReviewCreateModal } from "@features/review/components/ReviewCreateModal.tsx";
@@ -142,6 +145,15 @@ const ReviewCard = ({
 };
 
 export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
+  const location = useLocation();
+  const user = useCurrentUser();
+  const isAuthenticated = user.isSuccess && !!user.data.userId;
+  const loginCheckFailed =
+    user.isError &&
+    !(axios.isAxiosError(user.error) && user.error.response?.status === 401);
+  const loginUrl =
+    "/login?redirect=" +
+    encodeURIComponent(location.pathname + location.search + location.hash);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [hideSpoilers, setHideSpoilers] = useState(true);
@@ -199,11 +211,41 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
             <option value="LATEST">최신순</option>
             <option value="POPULAR">인기순</option>
           </select>
-          <Button size="lg" onClick={() => setIsModalOpen(true)}>
-            리뷰 작성
+          <Button
+            size="lg"
+            disabled={user.isPending}
+            onClick={() => setIsModalOpen(true)}
+          >
+            {user.isPending ? "로그인 확인 중..." : "리뷰 작성"}
           </Button>
         </div>
       </div>
+
+      {isModalOpen && !isAuthenticated && (
+        <div
+          role="status"
+          className="flex flex-col gap-3 rounded-2xl bg-violet-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p className="text-sm text-slate-700">
+            {loginCheckFailed
+              ? "로그인 상태를 확인하지 못했습니다. 다시 시도해주세요."
+              : "리뷰를 작성하려면 로그인이 필요합니다."}
+          </p>
+          {loginCheckFailed ? (
+            <Button
+              type="button"
+              disabled={user.isFetching}
+              onClick={() => void user.refetch()}
+            >
+              {user.isFetching ? "확인 중..." : "다시 시도"}
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link to={loginUrl}>로그인하기</Link>
+            </Button>
+          )}
+        </div>
+      )}
 
       {isLoading && (
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
@@ -265,7 +307,7 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
       )}
 
       <ReviewCreateModal
-        open={isModalOpen}
+        open={isModalOpen && isAuthenticated}
         onClose={() => setIsModalOpen(false)}
         contentId={contentId}
         contentTitle={contentTitle}
