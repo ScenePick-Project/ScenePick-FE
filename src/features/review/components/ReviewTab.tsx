@@ -182,8 +182,7 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">리뷰</h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500">
             {reviewList.length > 0
               ? "좋아하는 장면과 감상을 리뷰로 남겨보세요."
               : "첫 감상과 인상 깊은 장면을 리뷰로 남겨보세요."}

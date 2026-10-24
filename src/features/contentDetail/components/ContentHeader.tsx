@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type {
   ContentBasicDto,
   SeasonDto,
@@ -5,6 +6,8 @@ import type {
 import { SeasonSelector } from "@features/contentDetail/components/SeasonSelector.tsx";
 
 interface ContentHeaderProps {
+  children?: ReactNode;
+  action?: ReactNode;
   content?: ContentBasicDto;
   season?: SeasonDto | null;
   seasons: SeasonDto[];
@@ -13,287 +16,97 @@ interface ContentHeaderProps {
 }
 
 export const ContentHeader = ({
+  children,
+  action,
   content,
   season,
   seasons,
   selectedSeasonNo,
   onSeasonChange,
 }: ContentHeaderProps) => {
-  const getGenreStyles = (genre: string) => {
-    const colors: Record<
-      string,
-      { dot: string; text: string; bg: string; border: string }
-    > = {
-      ACTION: {
-        dot: "bg-red-500",
-        text: "text-red-700",
-        bg: "bg-red-50",
-        border: "border-red-200",
-      },
-      ADVENTURE: {
-        dot: "bg-orange-500",
-        text: "text-orange-700",
-        bg: "bg-orange-50",
-        border: "border-orange-200",
-      },
-      ANIMATION: {
-        dot: "bg-amber-400",
-        text: "text-amber-700",
-        bg: "bg-amber-50",
-        border: "border-amber-200",
-      },
-      COMEDY: {
-        dot: "bg-yellow-400",
-        text: "text-yellow-700",
-        bg: "bg-yellow-50",
-        border: "border-yellow-200",
-      },
-      DOCUMENTARY: {
-        dot: "bg-lime-500",
-        text: "text-lime-700",
-        bg: "bg-lime-50",
-        border: "border-lime-200",
-      },
-      FAMILY: {
-        dot: "bg-green-500",
-        text: "text-green-700",
-        bg: "bg-green-50",
-        border: "border-green-200",
-      },
-      DRAMA: {
-        dot: "bg-emerald-500",
-        text: "text-emerald-700",
-        bg: "bg-emerald-50",
-        border: "border-emerald-200",
-      },
-      SCIENCE_FICTION: {
-        dot: "bg-teal-500",
-        text: "text-teal-700",
-        bg: "bg-teal-50",
-        border: "border-teal-200",
-      },
-      SCI_FI: {
-        dot: "bg-teal-500",
-        text: "text-teal-700",
-        bg: "bg-teal-50",
-        border: "border-teal-200",
-      },
-      MYSTERY: {
-        dot: "bg-cyan-500",
-        text: "text-cyan-700",
-        bg: "bg-cyan-50",
-        border: "border-cyan-200",
-      },
-      TV_MOVIE: {
-        dot: "bg-sky-500",
-        text: "text-sky-700",
-        bg: "bg-sky-50",
-        border: "border-sky-200",
-      },
-      HISTORY: {
-        dot: "bg-blue-500",
-        text: "text-blue-700",
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-      },
-      WAR: {
-        dot: "bg-indigo-500",
-        text: "text-indigo-700",
-        bg: "bg-indigo-50",
-        border: "border-indigo-200",
-      },
-      FANTASY: {
-        dot: "bg-violet-500",
-        text: "text-violet-700",
-        bg: "bg-violet-50",
-        border: "border-violet-200",
-      },
-      WESTERN: {
-        dot: "bg-purple-500",
-        text: "text-purple-700",
-        bg: "bg-purple-50",
-        border: "border-purple-200",
-      },
-      MUSIC: {
-        dot: "bg-fuchsia-500",
-        text: "text-fuchsia-700",
-        bg: "bg-fuchsia-50",
-        border: "border-fuchsia-200",
-      },
-      ROMANCE: {
-        dot: "bg-pink-500",
-        text: "text-pink-700",
-        bg: "bg-pink-50",
-        border: "border-pink-200",
-      },
-      THRILLER: {
-        dot: "bg-rose-500",
-        text: "text-rose-700",
-        bg: "bg-rose-50",
-        border: "border-rose-200",
-      },
-      HORROR: {
-        dot: "bg-slate-900",
-        text: "text-slate-700",
-        bg: "bg-slate-100",
-        border: "border-slate-200",
-      },
-      CRIME: {
-        dot: "bg-stone-600",
-        text: "text-stone-700",
-        bg: "bg-stone-100",
-        border: "border-stone-200",
-      },
-    };
-
-    const key = genre.toUpperCase().replace(/[\s-]/g, "_");
-    if (colors[key]) return colors[key];
-
-    const palette = [
-      {
-        dot: "bg-blue-500",
-        text: "text-blue-700",
-        bg: "bg-blue-50",
-        border: "border-blue-200",
-      },
-      {
-        dot: "bg-emerald-500",
-        text: "text-emerald-700",
-        bg: "bg-emerald-50",
-        border: "border-emerald-200",
-      },
-      {
-        dot: "bg-amber-400",
-        text: "text-amber-700",
-        bg: "bg-amber-50",
-        border: "border-amber-200",
-      },
-      {
-        dot: "bg-rose-500",
-        text: "text-rose-700",
-        bg: "bg-rose-50",
-        border: "border-rose-200",
-      },
-      {
-        dot: "bg-violet-500",
-        text: "text-violet-700",
-        bg: "bg-violet-50",
-        border: "border-violet-200",
-      },
-      {
-        dot: "bg-teal-500",
-        text: "text-teal-700",
-        bg: "bg-teal-50",
-        border: "border-teal-200",
-      },
-      {
-        dot: "bg-orange-500",
-        text: "text-orange-700",
-        bg: "bg-orange-50",
-        border: "border-orange-200",
-      },
-      {
-        dot: "bg-lime-500",
-        text: "text-lime-700",
-        bg: "bg-lime-50",
-        border: "border-lime-200",
-      },
-      {
-        dot: "bg-cyan-500",
-        text: "text-cyan-700",
-        bg: "bg-cyan-50",
-        border: "border-cyan-200",
-      },
-      {
-        dot: "bg-fuchsia-500",
-        text: "text-fuchsia-700",
-        bg: "bg-fuchsia-50",
-        border: "border-fuchsia-200",
-      },
-    ];
-
-    const hash = key
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return palette[hash % palette.length];
-  };
-
-  if (!content) {
-    return (
-      <div className="animate-pulse h-[500px] bg-gray-50 rounded-3xl mb-12" />
-    );
-  }
-
-  const posterImageUrl =
-    season?.posterImageUrl ||
-    content.posterImageUrl ||
-    "/src/assets/images/test.jpg";
-
+  if (!content)
+    return <div className="h-[500px] animate-pulse rounded-3xl bg-slate-100" />;
+  const poster = season?.posterImageUrl || content.posterImageUrl;
+  const synopsis = season?.overview || content.synopsis;
   return (
-    <section className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16 items-start">
-      <div className="w-full max-w-[300px] shrink-0 group">
-        <div className="relative aspect-[2/3] rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
+    <section
+      aria-label="작품 소개와 채팅"
+      className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px]"
+    >
+      <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm xl:min-h-[504px]">
+        {poster && (
           <img
-            src={posterImageUrl}
-            alt={content.title}
-            className="w-full h-full object-cover"
+            src={poster}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-20 blur-2xl"
           />
-        </div>
-      </div>
-
-      <div className="flex-1 pt-4">
-        <h1 className="text-7xl font-black text-gray-900 mb-12 tracking-tighter">
-          {content.title}
-        </h1>
-
-        {seasons.length > 0 && (
-          <div className="mb-12 space-y-4">
-            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] whitespace-nowrap">
-                Season Select
-              </span>
-              <div className="h-[1px] flex-1 bg-slate-100" />
-            </div>
-            <SeasonSelector
-              seasons={seasons}
-              selectedSeasonNo={selectedSeasonNo}
-              onSeasonChange={onSeasonChange}
-              contentTitle={content.title}
-              variant="header"
-            />
-          </div>
         )}
-
-        <div className="w-full max-w-2xl">
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] whitespace-nowrap">
-              Genres
-            </span>
-            <div className="h-[1px] flex-1 bg-slate-100" />
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {content.genreList.map((genre) => {
-              const genreStyles = getGenreStyles(genre);
-              return (
-                <div
-                  key={genre}
-                  className={`flex items-center gap-2.5 px-5 py-2 rounded-full border ${genreStyles.border} ${genreStyles.bg}`}
-                >
+        <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-[#191827] via-[#191827]/80 to-violet-950/30" />
+        <div className="p-5 sm:p-8">
+          <p className="mb-6 flex items-center gap-2 text-[10px] font-bold tracking-[0.25em] text-violet-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
+            SCENE PICK · {seasons.length ? "SERIES" : "FILM"}
+          </p>
+          <div className="grid grid-cols-[112px_minmax(0,1fr)] items-start gap-x-5 gap-y-6 sm:grid-cols-[190px_minmax(0,1fr)] sm:gap-x-7">
+            <div className="row-span-1 sm:row-span-2 overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-2xl">
+              {poster ? (
+                <img
+                  src={poster}
+                  alt={content.title}
+                  className="aspect-[2/3] w-full object-cover"
+                />
+              ) : (
+                <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/50">
+                  포스터 준비 중
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 pt-1">
+              <h1 className="break-words text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+                {content.title}
+              </h1>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {content.genreList.map((genre) => (
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${genreStyles.dot}`}
-                  />
-                  <span
-                    className={`text-sm font-black tracking-tight uppercase ${genreStyles.text}`}
+                    key={genre}
+                    className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-300"
                   >
                     {genre}
                   </span>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
+            <div className="col-span-2 min-w-0 sm:col-span-1">
+              <p className="mb-2 text-[10px] font-bold tracking-[0.15em] text-violet-200">
+                STORY
+              </p>
+              <p className="line-clamp-5 text-sm leading-7 text-slate-300">
+                {synopsis || "아직 등록된 줄거리가 없어요."}
+              </p>
+              {action && <div className="mt-6">{action}</div>}
+            </div>
+          </div>
+          <div className="mt-8 border-t border-white/10 pt-5">
+            <p className="text-xs leading-6 text-slate-400">
+              기억하고 싶은 장면을 담고, 작품의 여운을 함께 나눠보세요.
+            </p>
           </div>
         </div>
       </div>
+      {children}
+      {seasons.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 xl:col-span-2">
+          <h2 className="mb-3 text-sm font-bold text-slate-800">시즌 선택</h2>
+          <SeasonSelector
+            seasons={seasons}
+            selectedSeasonNo={selectedSeasonNo}
+            onSeasonChange={onSeasonChange}
+            contentTitle={content.title}
+            variant="header"
+          />
+        </div>
+      )}
     </section>
   );
 };
