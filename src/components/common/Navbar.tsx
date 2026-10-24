@@ -48,7 +48,10 @@ export default function Navbar() {
         <div className="flex items-center gap-3 sm:gap-8">
           {" "}
           {/* 로고와 메뉴 사이 간격 조절 */}
-          <Link to="/" className="flex items-center">
+          <Link
+            to="/"
+            className="flex shrink-0 items-center [&>div]:gap-1 sm:[&>div]:gap-3 [&>div>div:first-child]:hidden sm:[&>div>div:first-child]:flex [&>div>div:last-child]:text-lg sm:[&>div>div:last-child]:text-2xl"
+          >
             <Logo />
           </Link>
           <nav className="flex gap-1 sm:gap-6 items-center whitespace-nowrap text-xs sm:text-base">
@@ -106,7 +109,10 @@ export default function Navbar() {
             </>
           ) : (
             <Button variant={"ghost"} asChild>
-              <Link to={"/login"}>로그인 / 회원가입</Link>
+              <Link to={"/login"}>
+                <span className="sm:hidden">로그인</span>
+                <span className="hidden sm:inline">로그인 / 회원가입</span>
+              </Link>
             </Button>
           )}
         </nav>

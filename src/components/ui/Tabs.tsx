@@ -19,7 +19,7 @@ export const Tabs = ({ items, activeId, onChange }: TabsProps) => {
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`px-6 py-4 text-sm font-bold transition-all relative
+            className={`px-4 sm:px-6 py-4 text-sm font-bold transition-all relative
               ${isActive ? "text-black" : "text-gray-400 hover:text-gray-600"}
             `}
           >

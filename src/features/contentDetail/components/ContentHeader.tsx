@@ -31,9 +31,9 @@ export const ContentHeader = ({
   return (
     <section
       aria-label="작품 소개와 채팅"
-      className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px]"
+      className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]"
     >
-      <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm xl:min-h-[504px]">
+      <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm lg:min-h-[504px]">
         {poster && (
           <img
             src={poster}
@@ -96,7 +96,7 @@ export const ContentHeader = ({
       </div>
       {children}
       {seasons.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 xl:col-span-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 lg:col-span-2">
           <h2 className="mb-3 text-sm font-bold text-slate-800">시즌 선택</h2>
           <SeasonSelector
             seasons={seasons}
