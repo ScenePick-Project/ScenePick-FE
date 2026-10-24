@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { isAxiosError } from "axios";
 import { Link, useLocation } from "react-router-dom";
 import {
   FiArrowDown,
@@ -39,10 +46,12 @@ function ChatRoom({
   title,
   userId,
   verifyUser,
+  authNotice,
 }: {
   contentId: number;
   title?: string;
   userId?: string;
+  authNotice?: ReactNode;
   verifyUser: () => Promise<{ userId: string | undefined; refreshed: boolean }>;
 }) {
   const chat = useContentChat(contentId, userId);
@@ -354,7 +363,9 @@ function ChatRoom({
         )}
 
         <footer className="border-t border-slate-100 p-4">
-          {userId ? (
+          {authNotice ? (
+            authNotice
+          ) : userId ? (
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -474,12 +485,36 @@ export function ContentChat({
     refetchOnWindowFocus: "always",
   });
   const userId = user.isError ? undefined : user.data?.userId;
+  const loginCheckFailed =
+    user.isError &&
+    !(isAxiosError(user.error) && user.error.response?.status === 401);
+  const authNotice = user.isPending ? (
+    <p role="status" className="py-4 text-center text-sm text-slate-500">
+      로그인 상태 확인 중…
+    </p>
+  ) : loginCheckFailed ? (
+    <div
+      role="status"
+      className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800"
+    >
+      <p>로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+      <button
+        type="button"
+        disabled={user.isFetching}
+        onClick={() => void user.refetch()}
+        className="mt-3 font-bold underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-amber-500 disabled:opacity-50"
+      >
+        {user.isFetching ? "확인 중…" : "로그인 상태 다시 확인"}
+      </button>
+    </div>
+  ) : undefined;
   return (
     <ChatRoom
       key={contentId}
       contentId={contentId}
       title={title}
       userId={userId}
+      authNotice={authNotice}
       verifyUser={async () => {
         try {
           const result = await verifyChatIdentity();
