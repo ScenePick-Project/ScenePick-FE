@@ -28,7 +28,7 @@ export const InfoTab = ({
   return (
     <div className="space-y-8">
       <section>
-        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+        <p className="text-sm text-slate-600 leading-8 whitespace-pre-wrap">
           {synopsis || "등록된 줄거리가 없습니다."}
         </p>
       </section>
