@@ -21,6 +21,7 @@ export interface EpisodeDto {
   title: string;
   summary: string;
   stillImageUrl: string;
+  airDate?: string | null;
 }
 
 export interface EpisodeListDto {

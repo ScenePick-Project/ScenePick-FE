@@ -1,4 +1,5 @@
 import { useContentEpisodes } from "@features/contentDetail/hooks/useContentDetail.ts";
+import { getAiredEpisodes } from "@features/contentDetail/utils/episodeUtils.ts";
 
 interface EpisodeTabProps {
   contentId: number;
@@ -34,17 +35,18 @@ export const EpisodeTab = ({
     );
   }
 
-  if (!episodes || episodes.length === 0) {
+  const airedEpisodes = getAiredEpisodes(episodes ?? []);
+  if (airedEpisodes.length === 0) {
     return (
       <div className="py-20 text-center text-gray-400">
-        등록된 에피소드가 없습니다.
+        공개된 에피소드가 없습니다.
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {episodes.map((episode) => (
+      {airedEpisodes.map((episode) => (
         <article
           key={episode.episodeId}
           className="rounded-3xl border border-slate-100 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.08)] overflow-hidden"
