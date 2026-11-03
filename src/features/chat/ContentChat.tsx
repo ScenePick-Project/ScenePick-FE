@@ -477,6 +477,7 @@ export function ContentChat({
   title?: string;
 }) {
   const queryClient = useQueryClient();
+  const [showAuthError, setShowAuthError] = useState(false);
   const user = useQuery({
     queryKey: ["user", "me"],
     queryFn: async () => (await verifyChatIdentity()).user,
@@ -497,14 +498,23 @@ export function ContentChat({
       role="status"
       className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800"
     >
-      <p>로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+      {showAuthError && (
+        <p>로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+      )}
       <button
         type="button"
         disabled={user.isFetching}
-        onClick={() => void user.refetch()}
+        onClick={() => {
+          setShowAuthError(true);
+          void user.refetch();
+        }}
         className="mt-3 font-bold underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-amber-500 disabled:opacity-50"
       >
-        {user.isFetching ? "확인 중…" : "로그인 상태 다시 확인"}
+        {user.isFetching
+          ? "확인 중…"
+          : showAuthError
+            ? "로그인 상태 다시 확인"
+            : "채팅 참여하기"}
       </button>
     </div>
   ) : undefined;
