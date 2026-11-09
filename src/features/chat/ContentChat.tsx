@@ -204,9 +204,9 @@ function ChatRoom({
     <section
       id="content-chat"
       aria-label="작품 채팅"
-      className="min-w-0 scroll-mt-24"
+      className="min-w-0 scroll-mt-24 lg:flex"
     >
-      <div className="overflow-hidden rounded-3xl border border-[#e4dfec] bg-white shadow-[0_16px_28px_rgba(46,28,73,0.06)]">
+      <div className="min-w-0 overflow-hidden rounded-3xl border border-[#e4dfec] bg-white shadow-[0_16px_28px_rgba(46,28,73,0.06)] lg:flex lg:flex-1 lg:flex-col">
         <header className="flex flex-wrap items-center justify-between gap-3 px-5 pb-4 pt-6 sm:px-6">
           <h2
             className="text-base font-bold tracking-tight text-slate-900"
@@ -232,7 +232,7 @@ function ChatRoom({
           </span>
         </div>
 
-        <div className="relative">
+        <div className="relative lg:min-h-[280px] lg:flex-1">
           <div
             ref={list}
             tabIndex={0}
@@ -247,7 +247,7 @@ function ChatRoom({
                 60;
               if (atBottom.current) setUnread(false);
             }}
-            className="h-[280px] overflow-y-auto overscroll-contain bg-white px-4 py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[300px] sm:px-5"
+            className="h-[280px] overflow-y-auto overscroll-contain bg-white px-4 py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[300px] sm:px-5 lg:absolute lg:inset-0 lg:h-full"
           >
             {chat.hasOlder && (
               <div className="mb-6 text-center">

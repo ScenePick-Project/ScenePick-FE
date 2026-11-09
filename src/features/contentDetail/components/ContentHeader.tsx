@@ -31,7 +31,7 @@ export const ContentHeader = ({
   return (
     <section
       aria-label="작품 소개와 채팅"
-      className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]"
+      className="grid items-start gap-5 lg:items-stretch lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]"
     >
       <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm lg:min-h-[504px]">
         {poster && (
