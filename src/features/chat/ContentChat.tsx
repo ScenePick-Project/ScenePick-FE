@@ -13,8 +13,6 @@ import {
   FiArrowUp,
   FiMessageCircle,
   FiRefreshCw,
-  FiWifi,
-  FiWifiOff,
 } from "react-icons/fi";
 import defaultProfileImage from "@/assets/images/default-profile.png";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,7 +35,7 @@ function Avatar({ url }: { url: string | null }) {
       src={url && !failed ? url : defaultProfileImage}
       onError={() => setFailed(true)}
       alt=""
-      className="h-9 w-9 shrink-0 rounded-full border border-white bg-violet-50 object-cover shadow-sm"
+      className="h-8 w-8 shrink-0 rounded-full border border-white bg-[#eae3f3] object-cover"
     />
   );
 }
@@ -208,33 +206,31 @@ function ChatRoom({
       aria-label="작품 채팅"
       className="min-w-0 scroll-mt-24"
     >
-      <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-violet-50/80 to-white px-4 py-4 sm:px-5">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-sm shadow-violet-200">
-              <FiMessageCircle size={20} aria-hidden="true" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="text-sm font-bold tracking-wide text-slate-900">
-                작품 라운지
-              </h2>
-              <p className="mt-1 text-xs text-slate-500" title={title}>
-                지금, 이 작품을 함께 이야기해요
-              </p>
-            </div>
-          </div>
+      <div className="overflow-hidden rounded-3xl border border-[#e4dfec] bg-white shadow-[0_16px_28px_rgba(46,28,73,0.06)]">
+        <header className="flex flex-wrap items-center justify-between gap-3 px-5 pb-4 pt-6 sm:px-6">
+          <h2
+            className="text-base font-bold tracking-tight text-slate-900"
+            title={title}
+          >
+            작품 라운지
+          </h2>
           <span
             role="status"
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-500"}`}
+            className="inline-flex items-center gap-2 text-[11px] text-slate-500"
           >
-            {connected ? (
-              <FiWifi aria-hidden="true" />
-            ) : (
-              <FiWifiOff aria-hidden="true" />
-            )}
+            <span
+              aria-hidden="true"
+              className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-emerald-500" : "bg-slate-400"}`}
+            />
             {connectionLabels[chat.connection]}
           </span>
         </header>
+        <div className="mx-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-[#eee7f8] bg-[#f7f4fc] px-4 py-3 text-xs sm:mx-5">
+          <span className="text-[#80639f]">함께 이야기해요</span>
+          <span className="font-medium text-[#5d467c]">
+            가장 오래 남은 장면은?
+          </span>
+        </div>
 
         <div className="relative">
           <div
@@ -251,7 +247,7 @@ function ChatRoom({
                 60;
               if (atBottom.current) setUnread(false);
             }}
-            className="h-[280px] overflow-y-auto overscroll-contain bg-slate-50/60 px-4 py-5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[280px] sm:px-5"
+            className="h-[280px] overflow-y-auto overscroll-contain bg-white px-4 py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[300px] sm:px-5"
           >
             {chat.hasOlder && (
               <div className="mb-6 text-center">
@@ -282,7 +278,7 @@ function ChatRoom({
                     aria-hidden="true"
                     className={`flex gap-3 motion-safe:animate-pulse ${index === 1 ? "flex-row-reverse" : ""}`}
                   >
-                    <div className="h-9 w-9 rounded-full bg-slate-200/70" />
+                    <div className="h-9 w-9 rounded-full bg-[#eee9f3]" />
                     <div className="h-16 w-3/5 rounded-2xl bg-slate-200/60" />
                   </div>
                 ))}
@@ -292,8 +288,8 @@ function ChatRoom({
               !chat.historyError &&
               chat.messages.length === 0 && (
                 <div className="flex h-full flex-col items-center justify-center pb-8 text-center">
-                  <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-violet-50 text-violet-400">
-                    <FiMessageCircle size={28} aria-hidden="true" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-50 text-violet-400">
+                    <FiMessageCircle size={22} aria-hidden="true" />
                   </div>
                   <p className="font-semibold text-slate-700">
                     첫 이야기를 기다리고 있어요
@@ -317,11 +313,11 @@ function ChatRoom({
                         className="mb-5 flex items-center gap-4"
                         aria-label={day}
                       >
-                        <span className="h-px flex-1 bg-slate-200/70" />
+                        <span className="h-px flex-1 bg-[#eee9f3]" />
                         <span className="text-[11px] text-slate-400">
                           {day.replaceAll("-", ". ")}
                         </span>
-                        <span className="h-px flex-1 bg-slate-200/70" />
+                        <span className="h-px flex-1 bg-[#eee9f3]" />
                       </div>
                     )}
                     <div
@@ -341,7 +337,7 @@ function ChatRoom({
                           {own ? "나" : message.nickname}
                         </p>
                         <p
-                          className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-left text-sm leading-6 [overflow-wrap:anywhere] ${own ? "rounded-tr-md bg-violet-600 text-white shadow-sm shadow-violet-200" : "rounded-tl-md border border-slate-200/70 bg-white text-slate-700 shadow-sm"}`}
+                          className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-left text-sm leading-6 [overflow-wrap:anywhere] ${own ? "rounded-tr-md bg-[#eae2f8] text-[#60477f]" : "rounded-tl-md bg-[#f5f4f7] text-[#56505e]"}`}
                         >
                           {message.body}
                         </p>
@@ -395,7 +391,7 @@ function ChatRoom({
           </div>
         )}
 
-        <footer className="border-t border-slate-100 p-4">
+        <footer className="px-4 pb-4 pt-3 sm:px-5">
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -405,7 +401,7 @@ function ChatRoom({
             <label htmlFor="chat-message" className="sr-only">
               메시지
             </label>
-            <div className="flex items-end gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-2 transition focus-within:border-violet-300 focus-within:ring-2 focus-within:ring-violet-100">
+            <div className="flex items-end gap-3 rounded-2xl border border-[#e5deed] bg-white p-2 transition focus-within:border-[#b49bd3] focus-within:ring-2 focus-within:ring-[#f1eafa]">
               <textarea
                 id="chat-message"
                 ref={textarea}
@@ -451,7 +447,7 @@ function ChatRoom({
                       chat.coolingDown)) ||
                   !!validateBody(draft)
                 }
-                className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm transition hover:bg-violet-700 focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
+                className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#8661b5] text-white transition hover:bg-[#73509f] focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
               >
                 {checkingUser || chat.sending ? (
                   <FiRefreshCw
@@ -495,7 +491,7 @@ function ChatRoom({
       <Modal
         open={authOpen}
         onClose={closeAuth}
-        className="max-w-sm"
+        className="max-w-sm border border-[#e4dfec]"
         ariaLabel="채팅 로그인 안내"
       >
         <div
@@ -539,7 +535,7 @@ function ChatRoom({
             {!authNotice && !userId && (
               <Link
                 to={loginUrl}
-                className="rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-violet-700 focus-visible:ring-2 focus-visible:ring-violet-400"
+                className="rounded-xl bg-[#8661b5] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#73509f] focus-visible:ring-2 focus-visible:ring-violet-400"
               >
                 로그인하기
               </Link>
