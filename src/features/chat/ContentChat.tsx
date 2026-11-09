@@ -212,7 +212,7 @@ function ChatRoom({
             className="text-base font-bold tracking-tight text-slate-900"
             title={title}
           >
-            작품 라운지
+            씬톡
           </h2>
           <span
             role="status"

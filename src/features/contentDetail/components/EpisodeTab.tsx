@@ -44,36 +44,41 @@ export const EpisodeTab = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="divide-y divide-slate-100">
       {episodes.map((episode) => (
         <article
           key={episode.episodeId}
-          className="rounded-3xl border border-slate-100 bg-white shadow-[0_12px_30px_rgba(15,23,42,0.08)] overflow-hidden"
+          className="flex items-start gap-4 py-5 first:pt-0 last:pb-0 sm:items-center sm:gap-6"
         >
-          <div className="aspect-[16/9] bg-slate-100">
+          <div className="aspect-[16/9] w-24 shrink-0 overflow-hidden rounded-md bg-slate-100 sm:w-40">
             {episode.stillImageUrl ? (
               <img
                 src={episode.stillImageUrl}
-                alt={episode.title}
+                alt=""
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-400 text-sm">
+              <div className="w-full h-full flex items-center justify-center text-slate-500 text-[10px] sm:text-xs">
                 썸네일 없음
               </div>
             )}
           </div>
 
-          <div className="p-6 space-y-3">
-            <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-              Episode {episode.episodeNo}
+          <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:gap-5">
+            <span
+              className="shrink-0 text-xs tabular-nums text-slate-500 sm:w-6 sm:pt-1"
+              aria-label={`${episode.episodeNo}화`}
+            >
+              {String(episode.episodeNo).padStart(2, "0")}
+            </span>
+            <div className="min-w-0 flex-1">
+              <h3 className="break-words text-sm font-semibold leading-6 text-slate-900 sm:text-base">
+                {episode.title || `에피소드 ${episode.episodeNo}`}
+              </h3>
+              <p className="mt-1.5 line-clamp-2 break-words text-xs leading-5 text-slate-500 sm:text-sm sm:leading-6">
+                {episode.summary || "등록된 요약이 없습니다."}
+              </p>
             </div>
-            <h3 className="text-xl font-black text-slate-900">
-              {episode.title || `에피소드 ${episode.episodeNo}`}
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
-              {episode.summary || "등록된 요약이 없습니다."}
-            </p>
           </div>
         </article>
       ))}
