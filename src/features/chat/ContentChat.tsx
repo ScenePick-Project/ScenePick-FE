@@ -401,7 +401,7 @@ function ChatRoom({
             <label htmlFor="chat-message" className="sr-only">
               메시지
             </label>
-            <div className="flex items-end gap-3 rounded-2xl border border-[#e5deed] bg-white p-2 transition focus-within:border-[#b49bd3] focus-within:ring-2 focus-within:ring-[#f1eafa]">
+            <div className="flex items-end gap-3 rounded-2xl border border-[#e5deed] bg-white p-1 transition focus-within:border-[#b49bd3] focus-within:ring-2 focus-within:ring-[#f1eafa]">
               <textarea
                 id="chat-message"
                 ref={textarea}
@@ -432,7 +432,7 @@ function ChatRoom({
                 aria-describedby="chat-input-help chat-input-error"
                 aria-invalid={length > 500 || !!inputError}
                 placeholder="이 작품에 대한 생각을 남겨보세요"
-                className="min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 text-slate-800 outline-none placeholder:text-slate-400"
+                className="min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm leading-6 text-slate-800 outline-none placeholder:text-slate-400"
               />
               <button
                 type="submit"
@@ -447,7 +447,7 @@ function ChatRoom({
                       chat.coolingDown)) ||
                   !!validateBody(draft)
                 }
-                className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#8661b5] text-white transition hover:bg-[#73509f] focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#8661b5] text-white transition hover:bg-[#73509f] focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
               >
                 {checkingUser || chat.sending ? (
                   <FiRefreshCw
@@ -471,7 +471,7 @@ function ChatRoom({
             <p
               id="chat-input-error"
               role="alert"
-              className="mt-2 text-xs text-rose-600"
+              className="mt-2 text-xs text-rose-600 empty:hidden"
             >
               {inputError ||
                 chat.sendError ||
@@ -483,9 +483,6 @@ function ChatRoom({
               로그인 상태 확인 중…
             </p>
           )}
-          <p className="mt-3 text-center text-[10px] leading-5 text-slate-400">
-            서로의 감상을 존중해 주세요. 대화에 스포일러가 포함될 수 있어요.
-          </p>
         </footer>
       </div>
       <Modal

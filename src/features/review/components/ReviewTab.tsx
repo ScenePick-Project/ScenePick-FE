@@ -64,10 +64,10 @@ const ReviewCard = ({
       className="group relative flex h-full w-full self-start rounded-[30px] border border-slate-200/80 bg-white p-6 text-left shadow-[0_14px_32px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(15,23,42,0.08)]"
     >
       <div className="relative flex min-h-[186px] w-full flex-col">
-        <div className="flex items-start gap-4 pr-24">
+        <div className="flex items-start gap-4">
           <UserAvatarFallback className="mt-0.5 h-12 w-12 shrink-0" />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2 pr-24">
               <span className="truncate text-[17px] font-extrabold text-slate-900">
                 {review.userId}
               </span>
@@ -75,6 +75,9 @@ const ReviewCard = ({
                 팔로잉
               </span>
             </div>
+            <p className="mt-1 text-xs text-slate-500">
+              {formatReviewDate(review.createdAt)}
+            </p>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1">
@@ -84,9 +87,6 @@ const ReviewCard = ({
               >
                 <span aria-hidden="true" className="text-violet-500">★</span>
                 {(review.rating ?? 0).toFixed(1)}
-              </span>
-              <span className="text-xs text-slate-500">
-                {formatReviewDate(review.createdAt)}
               </span>
             </div>
 
