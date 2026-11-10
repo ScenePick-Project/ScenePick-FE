@@ -35,7 +35,7 @@ export const ContentHeader = ({
       aria-label="작품 소개와 채팅"
       className="grid items-start gap-5 lg:items-stretch lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]"
     >
-      <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm lg:min-h-[504px]">
+      <div className="relative isolate overflow-hidden rounded-3xl bg-[#191827] text-white shadow-sm lg:flex lg:min-h-[504px] lg:flex-col lg:justify-center">
         {poster && (
           <img
             src={poster}
@@ -50,7 +50,7 @@ export const ContentHeader = ({
             <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
             SCENE PICK · {seasons.length ? "SERIES" : "FILM"}
           </p>
-          <div className="grid grid-cols-[112px_minmax(0,1fr)] items-start gap-x-5 gap-y-6 sm:grid-cols-[190px_minmax(0,1fr)] sm:gap-x-7">
+          <div className="grid grid-cols-[112px_minmax(0,1fr)] items-start gap-x-5 gap-y-6 sm:grid-cols-[190px_minmax(0,1fr)] sm:grid-rows-[auto_1fr] sm:gap-x-7">
             <div className="row-span-1 sm:row-span-2 overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-2xl">
               {poster ? (
                 <img
@@ -90,16 +90,11 @@ export const ContentHeader = ({
               <p className="mb-2 text-[10px] font-bold tracking-[0.15em] text-violet-200">
                 STORY
               </p>
-              <p className="line-clamp-5 text-sm leading-7 text-slate-300">
+              <p className="line-clamp-[8] text-sm leading-7 text-slate-300">
                 {synopsis || "아직 등록된 줄거리가 없어요."}
               </p>
               {action && <div className="mt-6">{action}</div>}
             </div>
-          </div>
-          <div className="mt-8 border-t border-white/10 pt-5">
-            <p className="text-xs leading-6 text-slate-400">
-              기억하고 싶은 장면을 담고, 작품의 여운을 함께 나눠보세요.
-            </p>
           </div>
         </div>
       </div>
@@ -119,3 +114,5 @@ export const ContentHeader = ({
     </section>
   );
 };
+
+
