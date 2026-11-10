@@ -73,6 +73,7 @@ export const ReviewCreateModal = ({
   contentId,
   contentTitle,
 }: ReviewCreateModalProps) => {
+  const [rating, setRating] = useState<number | null>(null);
   const [selectedTrack, setSelectedTrack] = useState<ItunesTrack | null>(null);
   const [mediaResetKey, setMediaResetKey] = useState(0);
 
@@ -105,6 +106,7 @@ export const ReviewCreateModal = ({
    */
   const resetForm = () => {
     reset();
+    setRating(null);
     setSelectedTrack(null);
     setMediaResetKey((key) => key + 1);
   };
@@ -153,6 +155,7 @@ export const ReviewCreateModal = ({
       isSpoiler: values.isSpoiler,
     };
 
+    if (rating !== null) payload.rating = rating;
     if (selectedTrack?.trackId) payload.trackId = String(selectedTrack.trackId);
     if (youtubeInfo.youtubeId) payload.youtubeId = youtubeInfo.youtubeId;
     if (startSeconds !== null) payload.startTime = startSeconds;
@@ -188,6 +191,33 @@ export const ReviewCreateModal = ({
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="px-8 py-6 space-y-6">
+        <div>
+          <label
+            htmlFor="review-rating"
+            className="text-sm font-semibold text-gray-700"
+          >
+            별점 <span className="font-normal text-gray-400">(선택)</span>
+          </label>
+          <select
+            id="review-rating"
+            value={rating ?? ""}
+            onChange={(event) =>
+              setRating(
+                event.target.value === "" ? null : Number(event.target.value),
+              )
+            }
+            className="mt-3 block w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300"
+          >
+            <option value="">별점 선택 안 함</option>
+            {Array.from({ length: 10 }, (_, index) => (index + 1) / 2).map(
+              (value) => (
+                <option key={value} value={value}>
+                  ★ {value.toFixed(1)} / 5
+                </option>
+              ),
+            )}
+          </select>
+        </div>
         <div>
           <label className="text-sm font-semibold text-gray-700">
             리뷰 본문

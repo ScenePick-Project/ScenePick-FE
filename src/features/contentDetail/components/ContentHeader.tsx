@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useContentRatingSummary } from "@features/contentDetail/hooks/useContentDetail.ts";
 import type {
   ContentBasicDto,
   SeasonDto,
@@ -24,6 +25,7 @@ export const ContentHeader = ({
   selectedSeasonNo,
   onSeasonChange,
 }: ContentHeaderProps) => {
+  const rating = useContentRatingSummary(content?.contentId ?? 0);
   if (!content)
     return <div className="h-[500px] animate-pulse rounded-3xl bg-slate-100" />;
   const poster = season?.posterImageUrl || content.posterImageUrl;
@@ -66,6 +68,15 @@ export const ContentHeader = ({
               <h1 className="break-words text-2xl font-black leading-tight tracking-tight sm:text-3xl">
                 {content.title}
               </h1>
+              <div className="mt-3 text-sm text-violet-100" role="status">
+                {rating.isLoading
+                  ? "별점 불러오는 중…"
+                  : rating.isError
+                    ? "별점을 불러오지 못했어요"
+                    : rating.data?.ratingCount
+                      ? `★ ${rating.data.averageRating?.toFixed(1)} / 5 · 평가 ${rating.data.ratingCount}개`
+                      : "아직 평가가 없어요"}
+              </div>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {content.genreList.map((genre) => (
                   <span

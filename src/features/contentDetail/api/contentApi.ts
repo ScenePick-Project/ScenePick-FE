@@ -69,3 +69,9 @@ export const getContentSeasons = async (contentId: number) => {
 
   return data.seasonList;
 };
+
+export const getContentRatingSummary = (contentId: number) =>
+  request<{ averageRating: number | null; ratingCount: number }>({
+    method: "GET",
+    url: `/contents/${contentId}/rating-summary`,
+  });

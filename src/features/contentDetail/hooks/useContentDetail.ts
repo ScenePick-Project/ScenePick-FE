@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   getContentBasic,
+  getContentRatingSummary,
   getContentCredits,
   getContentEpisodes,
   getContentSeasons,
@@ -40,6 +41,14 @@ export const useContentSeasons = (contentId: number) => {
   return useQuery({
     queryKey: ["content", "seasons", contentId],
     queryFn: () => getContentSeasons(contentId),
+    enabled: !!contentId,
+  });
+};
+
+export const useContentRatingSummary = (contentId: number) => {
+  return useQuery({
+    queryKey: ["content", "rating-summary", contentId],
+    queryFn: () => getContentRatingSummary(contentId),
     enabled: !!contentId,
   });
 };
