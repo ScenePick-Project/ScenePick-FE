@@ -232,7 +232,7 @@ function ChatRoom({
           </span>
         </div>
 
-        <div className="relative lg:min-h-[280px] lg:flex-1">
+        <div className="relative lg:min-h-[180px] lg:flex-1">
           <div
             ref={list}
             tabIndex={0}
