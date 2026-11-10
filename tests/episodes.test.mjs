@@ -38,13 +38,13 @@ vm.runInNewContext(
 const render = (seasonNo = 1) =>
   context.exports.EpisodeTab({ contentId: 1, seasonNo });
 
-test("renders exactly the returned episodes including missing air dates", () => {
+test("renders episodes with details regardless of air date", () => {
   result = {
     data: [undefined, null, "", "2026-11-01", "2099-01-01"].map(
       (airDate, index) => ({
         episodeId: index + 1,
         episodeNo: index + 1,
-        title: `회차 ${index + 1}`,
+        title: `특별한 이야기 ${index + 1}`,
         airDate,
       }),
     ),
@@ -72,4 +72,52 @@ test("empty, loading and error states stay distinct", () => {
   assert.match(render().props.children, /불러오는 중/);
   result = { isError: true };
   assert.match(render().props.children, /불러오지 못했습니다/);
+});
+
+test("hides episodes with only generic title, number and air date", () => {
+  result = {
+    data: [
+      {
+        episodeId: 1,
+        episodeNo: 8,
+        title: "8화",
+        summary: null,
+        stillImageUrl: null,
+        airDate: "2026-11-10",
+      },
+      {
+        episodeId: 2,
+        episodeNo: 9,
+        title: "Episode 9",
+        summary: "  ",
+        stillImageUrl: "",
+      },
+      { episodeId: 3, episodeNo: 10, title: "에피소드 10" },
+      {
+        episodeId: 4,
+        episodeNo: 11,
+        title: "11화",
+        summary: "줄거리가 있어요",
+      },
+      {
+        episodeId: 5,
+        episodeNo: 12,
+        title: "12화",
+        stillImageUrl: "https://example.com/still.jpg",
+      },
+      { episodeId: 6, episodeNo: 13, title: "새로운 시작" },
+      { episodeId: 7, episodeNo: 14, title: "", summary: "내용" },
+    ],
+  };
+  assert.deepEqual(
+    Array.from(render().props.children, (card) => card.key),
+    ["4", "5", "6", "7"],
+  );
+});
+
+test("shows empty state if all returned episodes are placeholders", () => {
+  result = {
+    data: [{ episodeId: 8, episodeNo: 8, title: "8화", airDate: "2026-11-10" }],
+  };
+  assert.match(render().props.children, /등록된 에피소드가 없습니다/);
 });

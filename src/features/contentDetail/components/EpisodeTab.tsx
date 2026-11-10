@@ -1,4 +1,16 @@
 import { useContentEpisodes } from "@features/contentDetail/hooks/useContentDetail.ts";
+import type { EpisodeDto } from "@features/contentDetail/types/contentDetailTypes.ts";
+
+const hasEpisodeDetails = (episode: EpisodeDto) => {
+  const title = episode.title?.trim() ?? "";
+  const genericTitle =
+    /^(?:제?\s*\d+\s*(?:화|회|회차)|(?:에피소드|episode|회차)\s*[-.:#]?\s*\d+)$/i;
+  return Boolean(
+    episode.summary?.trim() ||
+    episode.stillImageUrl?.trim() ||
+    (title && !genericTitle.test(title)),
+  );
+};
 
 interface EpisodeTabProps {
   contentId: number;
@@ -35,7 +47,8 @@ export const EpisodeTab = ({
     );
   }
 
-  if (!episodes?.length) {
+  const visibleEpisodes = episodes?.filter(hasEpisodeDetails) ?? [];
+  if (visibleEpisodes.length === 0) {
     return (
       <div className="py-20 text-center text-gray-400">
         등록된 에피소드가 없습니다.
@@ -45,7 +58,7 @@ export const EpisodeTab = ({
 
   return (
     <div className="divide-y divide-slate-100">
-      {episodes.map((episode) => (
+      {visibleEpisodes.map((episode) => (
         <article
           key={episode.episodeId}
           className="flex items-start gap-4 py-5 first:pt-0 last:pb-0 sm:items-center sm:gap-6"
