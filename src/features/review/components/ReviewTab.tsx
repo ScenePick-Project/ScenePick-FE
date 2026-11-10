@@ -75,17 +75,20 @@ const ReviewCard = ({
                 팔로잉
               </span>
             </div>
-            <p
-              className="mt-1 text-sm font-semibold text-violet-600"
-              aria-label={review.rating == null ? "별점 0.0점 / 5점, 미평가" : `별점 ${review.rating.toFixed(1)}점 / 5점`}
-            >
-              ★ {(review.rating ?? 0).toFixed(1)}
-            </p>
-            <p className="mt-1 text-[15px] text-slate-400">
-              {formatReviewDate(review.createdAt)}
-            </p>
           </div>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <span
+                className="inline-flex items-center gap-1 rounded-lg bg-violet-50 px-2 py-1 text-xs font-bold tabular-nums text-violet-700"
+                aria-label={review.rating == null ? "별점 0.0점 / 5점, 미평가" : `별점 ${review.rating.toFixed(1)}점 / 5점`}
+              >
+                <span aria-hidden="true" className="text-violet-500">★</span>
+                {(review.rating ?? 0).toFixed(1)}
+              </span>
+              <span className="text-xs text-slate-500">
+                {formatReviewDate(review.createdAt)}
+              </span>
+            </div>
 
         {review.isSpoiler && (
           <span className="absolute right-0 top-0 shrink-0 rounded-2xl bg-[#fff1e8] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#ff6a2a]">
