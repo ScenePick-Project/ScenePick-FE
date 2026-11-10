@@ -144,14 +144,12 @@ test("Enter opens popup, but Shift+Enter and IME composition do not", async () =
   const f = await setup();
   f.type("안녕");
   const key = (extra = {}) =>
-    f
-      .input()
-      .props.onKeyDown({
-        key: "Enter",
-        nativeEvent: {},
-        preventDefault() {},
-        ...extra,
-      });
+    f.input().props.onKeyDown({
+      key: "Enter",
+      nativeEvent: {},
+      preventDefault() {},
+      ...extra,
+    });
   key({ shiftKey: true });
   assert.equal(f.modal().props.open, false);
   key({ nativeEvent: { isComposing: true } });
@@ -211,4 +209,16 @@ test("authenticated connected user still sends and clears draft", async () => {
   assert.deepEqual(f.sent, ["보내기"]);
   assert.equal(f.input().props.value, "");
   assert.equal(f.modal().props.open, false);
+});
+
+test("a successful response with no user is treated as logged out", async () => {
+  const f = await setup();
+  f.user.isError = false;
+  f.user.data = null;
+  f.type("안녕하세요");
+  f.submit();
+  assert.equal(f.modal().props.open, true);
+  const link = find(f.modal(), (n) => n.type === "a");
+  assert.equal(link.props.children, "로그인 / 회원가입하러 가기");
+  assert.equal(link.props.to, "/login?redirect=%2Fcontent%2F1%3Ftype%3DTV");
 });

@@ -520,7 +520,7 @@ function ChatRoom({
             <p className="text-sm text-slate-600">
               {userId
                 ? "로그인 상태를 확인했어요. 다시 메시지를 보내주세요."
-                : "메시지를 보내려면 로그인이 필요해요."}
+                : "로그인해 주세요."}
             </p>
           )}
           <div className="mt-6 flex justify-end gap-2">
@@ -537,7 +537,7 @@ function ChatRoom({
                 to={loginUrl}
                 className="rounded-xl bg-[#8661b5] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#73509f] focus-visible:ring-2 focus-visible:ring-violet-400"
               >
-                로그인하기
+                로그인 / 회원가입하러 가기
               </Link>
             )}
           </div>
@@ -556,8 +556,8 @@ export function ContentChat({
 }) {
   const queryClient = useQueryClient();
   const user = useQuery({
-    queryKey: ["user", "me"],
-    queryFn: async () => (await verifyChatIdentity()).user,
+    queryKey: ["user", "me", "chat"],
+    queryFn: async () => (await verifyChatIdentity()).user ?? null,
     retry: false,
     staleTime: 0,
     refetchOnWindowFocus: "always",
@@ -597,8 +597,10 @@ export function ContentChat({
       verifyUser={async () => {
         try {
           const result = await verifyChatIdentity();
-          queryClient.setQueryData(["user", "me"], result.user);
-          return { userId: result.user.userId, refreshed: result.refreshed };
+          queryClient.setQueryData(["user", "me", "chat"], result.user ?? null);
+          if (result.user)
+            queryClient.setQueryData(["user", "me"], result.user);
+          return { userId: result.user?.userId, refreshed: result.refreshed };
         } catch (error) {
           void user.refetch();
           throw error;
