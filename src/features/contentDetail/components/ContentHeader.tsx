@@ -73,9 +73,7 @@ export const ContentHeader = ({
                   ? "별점 불러오는 중…"
                   : rating.isError
                     ? "별점을 불러오지 못했어요"
-                    : rating.data?.ratingCount
-                      ? `★ ${rating.data.averageRating?.toFixed(1)} / 5 · 평가 ${rating.data.ratingCount}개`
-                      : "아직 평가가 없어요"}
+                    : `★ ${(rating.data?.averageRating ?? 0).toFixed(1)} / 5 · 평가 ${rating.data?.ratingCount ?? 0}개`}
               </div>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 {content.genreList.map((genre) => (

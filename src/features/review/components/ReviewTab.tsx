@@ -75,14 +75,12 @@ const ReviewCard = ({
                 팔로잉
               </span>
             </div>
-            {review.rating != null && (
-              <p
-                className="mt-1 text-sm font-semibold text-violet-600"
-                aria-label={`별점 ${review.rating.toFixed(1)}점 / 5점`}
-              >
-                ★ {review.rating.toFixed(1)}
-              </p>
-            )}
+            <p
+              className="mt-1 text-sm font-semibold text-violet-600"
+              aria-label={review.rating == null ? "별점 0.0점 / 5점, 미평가" : `별점 ${review.rating.toFixed(1)}점 / 5점`}
+            >
+              ★ {(review.rating ?? 0).toFixed(1)}
+            </p>
             <p className="mt-1 text-[15px] text-slate-400">
               {formatReviewDate(review.createdAt)}
             </p>
