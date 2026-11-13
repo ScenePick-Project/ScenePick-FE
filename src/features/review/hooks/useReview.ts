@@ -36,6 +36,9 @@ export const useCreateReview = (contentId: number) => {
       queryClient.invalidateQueries({
         queryKey: ["reviews", contentId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["content", "rating-summary", contentId],
+      });
     },
   });
 };
@@ -50,6 +53,9 @@ export const useDeleteReview = () => {
         queryKey: ["reviews"],
       });
       queryClient.invalidateQueries({ queryKey: ["mypage"] });
+      queryClient.invalidateQueries({
+        queryKey: ["content", "rating-summary"],
+      });
     },
   });
 };

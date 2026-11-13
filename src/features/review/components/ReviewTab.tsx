@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
-import { useCurrentUser } from "@features/user/hooks/useUser.ts";
+import { useQuery } from "@tanstack/react-query";
+import { verifyChatIdentity } from "@features/chat/chatApi.ts";
+import { Modal } from "@components/ui/Modal.tsx";
 import { UserAvatarFallback } from "@components/common/UserAvatarFallback.tsx";
 import { Button } from "@components/ui/Button.tsx";
 import { ReviewCreateModal } from "@features/review/components/ReviewCreateModal.tsx";
@@ -62,10 +64,10 @@ const ReviewCard = ({
       className="group relative flex h-full w-full self-start rounded-[30px] border border-slate-200/80 bg-white p-6 text-left shadow-[0_14px_32px_rgba(15,23,42,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_44px_rgba(15,23,42,0.08)]"
     >
       <div className="relative flex min-h-[186px] w-full flex-col">
-        <div className="flex items-start gap-4 pr-24">
+        <div className="flex items-start gap-4">
           <UserAvatarFallback className="mt-0.5 h-12 w-12 shrink-0" />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2 pr-24">
               <span className="truncate text-[17px] font-extrabold text-slate-900">
                 {review.userId}
               </span>
@@ -73,11 +75,20 @@ const ReviewCard = ({
                 팔로잉
               </span>
             </div>
-            <p className="mt-1 text-[15px] text-slate-400">
+            <p className="mt-1 text-xs text-slate-500">
               {formatReviewDate(review.createdAt)}
             </p>
           </div>
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <span
+                className="inline-flex items-center gap-1 rounded-lg bg-violet-50 px-2 py-1 text-xs font-bold tabular-nums text-violet-700"
+                aria-label={review.rating == null ? "별점 0.0점 / 5점, 미평가" : `별점 ${review.rating.toFixed(1)}점 / 5점`}
+              >
+                <span aria-hidden="true" className="text-violet-500">★</span>
+                {(review.rating ?? 0).toFixed(1)}
+              </span>
+            </div>
 
         {review.isSpoiler && (
           <span className="absolute right-0 top-0 shrink-0 rounded-2xl bg-[#fff1e8] px-4 py-2 text-xs font-black uppercase tracking-[0.08em] text-[#ff6a2a]">
@@ -129,9 +140,7 @@ const ReviewCard = ({
           <div className="flex items-center gap-4">
             <span
               className={`inline-flex items-center gap-2 font-semibold ${
-                review.isLikedByCurrentUser
-                  ? "text-rose-500"
-                  : "text-slate-400"
+                review.isLikedByCurrentUser ? "text-rose-500" : "text-slate-400"
               }`}
             >
               <span className="text-base leading-none">♥</span>
@@ -146,8 +155,14 @@ const ReviewCard = ({
 
 export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
   const location = useLocation();
-  const user = useCurrentUser();
-  const isAuthenticated = user.isSuccess && !!user.data.userId;
+  const user = useQuery({
+    queryKey: ["user", "me", "chat"],
+    queryFn: async () => (await verifyChatIdentity()).user ?? null,
+    retry: false,
+    staleTime: 0,
+    refetchOnWindowFocus: "always",
+  });
+  const isAuthenticated = user.isSuccess && !!user.data?.userId;
   const loginCheckFailed =
     user.isError &&
     !(axios.isAxiosError(user.error) && user.error.response?.status === 401);
@@ -155,6 +170,25 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
     "/login?redirect=" +
     encodeURIComponent(location.pathname + location.search + location.hash);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const writeButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const authActions = useRef<HTMLDivElement>(null);
+  const showAuthModal = isModalOpen && !isAuthenticated;
+
+  useEffect(() => {
+    if (!showAuthModal) return;
+    closeButton.current?.focus();
+    return () => writeButton.current?.focus();
+  }, [showAuthModal]);
+
+  useEffect(() => {
+    if (
+      showAuthModal &&
+      (!authActions.current?.contains(document.activeElement) ||
+        document.activeElement?.matches(":disabled"))
+    )
+      closeButton.current?.focus();
+  }, [showAuthModal, user.isError, user.isFetching]);
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [hideSpoilers, setHideSpoilers] = useState(true);
   const [sortBy, setSortBy] = useState<ReviewSortBy>("LATEST");
@@ -172,8 +206,13 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
     [data],
   );
   const trackIds = useMemo(
-    () =>
-      [...new Set(reviewList.flatMap((review) => (review.trackId ? [review.trackId] : [])))],
+    () => [
+      ...new Set(
+        reviewList.flatMap((review) =>
+          review.trackId ? [review.trackId] : [],
+        ),
+      ),
+    ],
     [reviewList],
   );
   const { data: reviewTracks } = useReviewTracks(trackIds);
@@ -211,6 +250,7 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
             <option value="POPULAR">인기순</option>
           </select>
           <Button
+            ref={writeButton}
             size="lg"
             disabled={user.isPending}
             onClick={() => setIsModalOpen(true)}
@@ -220,31 +260,74 @@ export const ReviewTab = ({ contentId, contentTitle }: ReviewTabProps) => {
         </div>
       </div>
 
-      {isModalOpen && !isAuthenticated && (
+      <Modal
+        open={showAuthModal}
+        onClose={() => setIsModalOpen(false)}
+        className="max-w-sm border border-[#e4dfec]"
+        ariaLabel="리뷰 로그인 안내"
+      >
         <div
-          role="status"
-          className="flex flex-col gap-3 rounded-2xl bg-violet-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+          ref={authActions}
+          className="p-6"
+          onKeyDown={(event) => {
+            if (event.key !== "Tab") return;
+            const actions = event.currentTarget.querySelectorAll<HTMLElement>(
+              "button:not(:disabled), a[href]",
+            );
+            const first = actions[0];
+            const last = actions[actions.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last?.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first?.focus();
+            }
+          }}
         >
-          <p className="text-sm text-slate-700">
-            {loginCheckFailed
-              ? "로그인 상태를 확인하지 못했습니다. 다시 시도해주세요."
-              : "리뷰를 작성하려면 로그인이 필요합니다."}
-          </p>
+          <h3 className="mb-3 text-lg font-bold text-slate-900">
+            리뷰 작성 안내
+          </h3>
           {loginCheckFailed ? (
-            <Button
-              type="button"
-              disabled={user.isFetching}
-              onClick={() => void user.refetch()}
+            <div
+              role="status"
+              className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800"
             >
-              {user.isFetching ? "확인 중..." : "다시 시도"}
-            </Button>
+              <p>
+                로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.
+              </p>
+              <button
+                type="button"
+                disabled={user.isFetching}
+                onClick={() => void user.refetch()}
+                className="mt-3 font-bold underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-amber-500 disabled:opacity-50"
+              >
+                {user.isFetching ? "확인 중…" : "로그인 상태 다시 확인"}
+              </button>
+            </div>
           ) : (
-            <Button asChild>
-              <Link to={loginUrl}>로그인하기</Link>
-            </Button>
+            <p className="text-sm text-slate-600">로그인해 주세요.</p>
           )}
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              ref={closeButton}
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 focus-visible:ring-2 focus-visible:ring-violet-400"
+            >
+              닫기
+            </button>
+            {!loginCheckFailed && (
+              <Link
+                to={loginUrl}
+                className="rounded-xl bg-[#8661b5] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#73509f] focus-visible:ring-2 focus-visible:ring-violet-400"
+              >
+                로그인 / 회원가입하러 가기
+              </Link>
+            )}
+          </div>
         </div>
-      )}
+      </Modal>
 
       {isLoading && (
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">

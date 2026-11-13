@@ -7,9 +7,16 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   className?: string;
+  ariaLabel?: string;
 }
 
-export const Modal = ({ open, onClose, children, className }: ModalProps) => {
+export const Modal = ({
+  open,
+  onClose,
+  children,
+  className,
+  ariaLabel,
+}: ModalProps) => {
   useEffect(() => {
     if (!open) return;
 
@@ -34,6 +41,7 @@ export const Modal = ({ open, onClose, children, className }: ModalProps) => {
       className="fixed inset-0 z-50 flex items-center justify-center px-4 py-10"
       role="dialog"
       aria-modal="true"
+      aria-label={ariaLabel}
     >
       <div
         className="absolute inset-0 bg-black/40"

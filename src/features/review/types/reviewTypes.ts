@@ -1,5 +1,6 @@
 export interface ReviewCreateDto {
   reviewBody: string;
+  rating?: number | null;
   isSpoiler: boolean;
   trackId?: string;
   youtubeId?: string;
@@ -22,6 +23,7 @@ export interface ReviewDto {
   contentId: number;
   userId: string;
   reviewBody: string;
+  rating?: number | null;
   startTime?: number | null;
   endTime?: number | null;
   youtubeId?: string | null;

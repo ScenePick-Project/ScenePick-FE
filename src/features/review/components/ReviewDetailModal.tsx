@@ -224,6 +224,9 @@ export const ReviewDetailModal = ({
                 </div>
 
                 <div className="rounded-[30px] border border-slate-200/80 bg-[linear-gradient(180deg,#ffffff_0%,#fbfdff_100%)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">
+                  <p className="mb-3 text-sm font-semibold text-violet-600" aria-label={review.rating == null ? "별점 0.0점 / 5점, 미평가" : `별점 ${review.rating.toFixed(1)}점 / 5점`}>
+                    ★ {(review.rating ?? 0).toFixed(1)}
+                  </p>
                   <p className="whitespace-pre-wrap break-words text-[18px] leading-[1.9rem] tracking-[-0.02em] text-slate-800">
                     {review.reviewBody}
                   </p>

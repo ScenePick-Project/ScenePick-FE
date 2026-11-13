@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { Modal } from "@/components/ui/Modal";
 import { isAxiosError } from "axios";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -12,8 +13,6 @@ import {
   FiArrowUp,
   FiMessageCircle,
   FiRefreshCw,
-  FiWifi,
-  FiWifiOff,
 } from "react-icons/fi";
 import defaultProfileImage from "@/assets/images/default-profile.png";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -36,7 +35,7 @@ function Avatar({ url }: { url: string | null }) {
       src={url && !failed ? url : defaultProfileImage}
       onError={() => setFailed(true)}
       alt=""
-      className="h-9 w-9 shrink-0 rounded-full border border-white bg-violet-50 object-cover shadow-sm"
+      className="h-8 w-8 shrink-0 rounded-full border border-white bg-[#eae3f3] object-cover"
     />
   );
 }
@@ -47,15 +46,20 @@ function ChatRoom({
   userId,
   verifyUser,
   authNotice,
+  authPending,
 }: {
   contentId: number;
   title?: string;
   userId?: string;
   authNotice?: ReactNode;
+  authPending: boolean;
   verifyUser: () => Promise<{ userId: string | undefined; refreshed: boolean }>;
 }) {
   const chat = useContentChat(contentId, userId);
   const location = useLocation();
+  const [authOpen, setAuthOpen] = useState(false);
+  const authActions = useRef<HTMLDivElement>(null);
+  const closeAuthButton = useRef<HTMLButtonElement>(null);
   const [draft, setDraft] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
   const [checkingUser, setCheckingUser] = useState(false);
@@ -70,7 +74,9 @@ function ChatRoom({
   const draftOwner = useRef(userId);
   const connected = chat.connection === "connected";
   const length = messageLength(draft);
-  const loginUrl = "/login?redirect=" + encodeURIComponent(location.pathname);
+  const loginUrl =
+    "/login?redirect=" +
+    encodeURIComponent(location.pathname + location.search);
 
   useEffect(() => {
     mounted.current = true;
@@ -110,10 +116,35 @@ function ChatRoom({
     previousLast.current = lastId;
   }, [chat.messages, chat.loadingOlder]);
 
+  useEffect(() => {
+    if (!authOpen) return;
+    closeAuthButton.current?.focus();
+    return () => textarea.current?.focus();
+  }, [authOpen]);
+
+  useEffect(() => {
+    if (
+      authOpen &&
+      (!authActions.current?.contains(document.activeElement) ||
+        document.activeElement?.matches(":disabled"))
+    )
+      closeAuthButton.current?.focus();
+  }, [authOpen, authNotice]);
+
+  function closeAuth() {
+    setAuthOpen(false);
+  }
+
   async function send() {
     const error = validateBody(draft);
     if (error) {
       setInputError(error);
+      return;
+    }
+    if (authPending) return;
+    if (authNotice || !userId) {
+      setInputError(null);
+      setAuthOpen(true);
       return;
     }
     if (checkingUser || chat.sending || chat.coolingDown || !connected) return;
@@ -173,37 +204,35 @@ function ChatRoom({
     <section
       id="content-chat"
       aria-label="작품 채팅"
-      className="min-w-0 scroll-mt-24"
+      className="min-w-0 scroll-mt-24 lg:flex"
     >
-      <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-violet-50/80 to-white px-4 py-4 sm:px-5">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-sm shadow-violet-200">
-              <FiMessageCircle size={20} aria-hidden="true" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="text-sm font-bold tracking-wide text-slate-900">
-                작품 라운지
-              </h2>
-              <p className="mt-1 text-xs text-slate-500" title={title}>
-                지금, 이 작품을 함께 이야기해요
-              </p>
-            </div>
-          </div>
+      <div className="min-w-0 overflow-hidden rounded-3xl border border-[#e4dfec] bg-white shadow-[0_16px_28px_rgba(46,28,73,0.06)] lg:flex lg:flex-1 lg:flex-col">
+        <header className="flex flex-wrap items-center justify-between gap-3 px-5 pb-4 pt-6 sm:px-6">
+          <h2
+            className="text-base font-bold tracking-tight text-slate-900"
+            title={title}
+          >
+            씬톡
+          </h2>
           <span
             role="status"
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${connected ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-500"}`}
+            className="inline-flex items-center gap-2 text-[11px] text-slate-500"
           >
-            {connected ? (
-              <FiWifi aria-hidden="true" />
-            ) : (
-              <FiWifiOff aria-hidden="true" />
-            )}
+            <span
+              aria-hidden="true"
+              className={`h-1.5 w-1.5 rounded-full ${connected ? "bg-emerald-500" : "bg-slate-400"}`}
+            />
             {connectionLabels[chat.connection]}
           </span>
         </header>
+        <div className="mx-4 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-[#eee7f8] bg-[#f7f4fc] px-4 py-3 text-xs sm:mx-5">
+          <span className="text-[#80639f]">함께 이야기해요</span>
+          <span className="font-medium text-[#5d467c]">
+            가장 오래 남은 장면은?
+          </span>
+        </div>
 
-        <div className="relative">
+        <div className="relative lg:min-h-[180px] lg:flex-1">
           <div
             ref={list}
             tabIndex={0}
@@ -218,7 +247,7 @@ function ChatRoom({
                 60;
               if (atBottom.current) setUnread(false);
             }}
-            className="h-[280px] overflow-y-auto overscroll-contain bg-slate-50/60 px-4 py-5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[280px] sm:px-5"
+            className="h-[280px] overflow-y-auto overscroll-contain bg-white px-4 py-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-400 sm:h-[300px] sm:px-5 lg:absolute lg:inset-0 lg:h-full"
           >
             {chat.hasOlder && (
               <div className="mb-6 text-center">
@@ -249,7 +278,7 @@ function ChatRoom({
                     aria-hidden="true"
                     className={`flex gap-3 motion-safe:animate-pulse ${index === 1 ? "flex-row-reverse" : ""}`}
                   >
-                    <div className="h-9 w-9 rounded-full bg-slate-200/70" />
+                    <div className="h-9 w-9 rounded-full bg-[#eee9f3]" />
                     <div className="h-16 w-3/5 rounded-2xl bg-slate-200/60" />
                   </div>
                 ))}
@@ -259,8 +288,8 @@ function ChatRoom({
               !chat.historyError &&
               chat.messages.length === 0 && (
                 <div className="flex h-full flex-col items-center justify-center pb-8 text-center">
-                  <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-violet-50 text-violet-400">
-                    <FiMessageCircle size={28} aria-hidden="true" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-50 text-violet-400">
+                    <FiMessageCircle size={22} aria-hidden="true" />
                   </div>
                   <p className="font-semibold text-slate-700">
                     첫 이야기를 기다리고 있어요
@@ -284,11 +313,11 @@ function ChatRoom({
                         className="mb-5 flex items-center gap-4"
                         aria-label={day}
                       >
-                        <span className="h-px flex-1 bg-slate-200/70" />
+                        <span className="h-px flex-1 bg-[#eee9f3]" />
                         <span className="text-[11px] text-slate-400">
                           {day.replaceAll("-", ". ")}
                         </span>
-                        <span className="h-px flex-1 bg-slate-200/70" />
+                        <span className="h-px flex-1 bg-[#eee9f3]" />
                       </div>
                     )}
                     <div
@@ -308,7 +337,7 @@ function ChatRoom({
                           {own ? "나" : message.nickname}
                         </p>
                         <p
-                          className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-left text-sm leading-6 [overflow-wrap:anywhere] ${own ? "rounded-tr-md bg-violet-600 text-white shadow-sm shadow-violet-200" : "rounded-tl-md border border-slate-200/70 bg-white text-slate-700 shadow-sm"}`}
+                          className={`whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-left text-sm leading-6 [overflow-wrap:anywhere] ${own ? "rounded-tr-md bg-[#eae2f8] text-[#60477f]" : "rounded-tl-md bg-[#f5f4f7] text-[#56505e]"}`}
                         >
                           {message.body}
                         </p>
@@ -362,109 +391,155 @@ function ChatRoom({
           </div>
         )}
 
-        <footer className="border-t border-slate-100 p-4">
-          {authNotice ? (
-            authNotice
-          ) : userId ? (
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                void send();
-              }}
-            >
-              <label htmlFor="chat-message" className="sr-only">
-                메시지
-              </label>
-              <div className="flex items-end gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-2 transition focus-within:border-violet-300 focus-within:ring-2 focus-within:ring-violet-100">
-                <textarea
-                  id="chat-message"
-                  ref={textarea}
-                  rows={1}
-                  value={draft}
-                  onChange={(event) => {
-                    setDraft(event.target.value);
-                    setInputError(null);
-                  }}
-                  onCompositionStart={() => {
-                    composing.current = true;
-                  }}
-                  onCompositionEnd={() => {
-                    composing.current = false;
-                  }}
-                  onKeyDown={(event) => {
-                    if (
-                      event.key === "Enter" &&
-                      !event.shiftKey &&
-                      !event.nativeEvent.isComposing &&
-                      !composing.current &&
-                      event.keyCode !== 229
-                    ) {
-                      event.preventDefault();
-                      void send();
-                    }
-                  }}
-                  aria-describedby="chat-input-help chat-input-error"
-                  aria-invalid={length > 500 || !!inputError}
-                  placeholder="이 작품에 대한 생각을 남겨보세요"
-                  className="min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-sm leading-6 text-slate-800 outline-none placeholder:text-slate-400"
-                />
-                <button
-                  type="submit"
-                  aria-label="메시지 보내기"
-                  disabled={
-                    !connected ||
-                    checkingUser ||
-                    chat.sending ||
-                    chat.coolingDown ||
-                    !!validateBody(draft)
+        <footer className="px-4 pb-4 pt-3 sm:px-5">
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void send();
+            }}
+          >
+            <label htmlFor="chat-message" className="sr-only">
+              메시지
+            </label>
+            <div className="flex items-end gap-3 rounded-2xl border border-[#e5deed] bg-white p-1 transition focus-within:border-[#b49bd3] focus-within:ring-2 focus-within:ring-[#f1eafa]">
+              <textarea
+                id="chat-message"
+                ref={textarea}
+                rows={1}
+                value={draft}
+                onChange={(event) => {
+                  setDraft(event.target.value);
+                  setInputError(null);
+                }}
+                onCompositionStart={() => {
+                  composing.current = true;
+                }}
+                onCompositionEnd={() => {
+                  composing.current = false;
+                }}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" &&
+                    !event.shiftKey &&
+                    !event.nativeEvent.isComposing &&
+                    !composing.current &&
+                    event.keyCode !== 229
+                  ) {
+                    event.preventDefault();
+                    void send();
                   }
-                  className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm transition hover:bg-violet-700 focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
-                >
-                  {checkingUser || chat.sending ? (
-                    <FiRefreshCw
-                      className="motion-safe:animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <FiArrowUp size={20} aria-hidden="true" />
-                  )}
-                </button>
-              </div>
-              <div
-                id="chat-input-help"
-                className="mt-2 flex justify-between gap-2 text-[10px] text-slate-400"
+                }}
+                aria-describedby="chat-input-help chat-input-error"
+                aria-invalid={length > 500 || !!inputError}
+                placeholder="이 작품에 대한 생각을 남겨보세요"
+                className="min-w-0 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm leading-6 text-slate-800 outline-none placeholder:text-slate-400"
+              />
+              <button
+                type="submit"
+                aria-label="메시지 보내기"
+                disabled={
+                  authPending ||
+                  (!!userId &&
+                    !authNotice &&
+                    (!connected ||
+                      checkingUser ||
+                      chat.sending ||
+                      chat.coolingDown)) ||
+                  !!validateBody(draft)
+                }
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#8661b5] text-white transition hover:bg-[#73509f] focus-visible:ring-4 focus-visible:ring-violet-200 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
               >
-                <span>Enter 전송 · Shift + Enter 줄바꿈</span>
-                <span className={length > 500 ? "text-rose-500" : ""}>
-                  {length} / 500
-                </span>
-              </div>
-              <p
-                id="chat-input-error"
-                role="alert"
-                className="mt-2 text-xs text-rose-600"
-              >
-                {inputError ||
-                  chat.sendError ||
-                  (length > 500 ? "메시지는 500자까지 보낼 수 있어요." : "")}
-              </p>
-            </form>
-          ) : (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-violet-50 px-4 py-4">
-              <p className="text-sm text-slate-600">함께 이야기하고 싶다면</p>
-              <Link
-                to={loginUrl}
-                className="rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-violet-700 focus-visible:ring-4 focus-visible:ring-violet-200"
-              >
-                로그인하고 참여하기
-              </Link>
+                {checkingUser || chat.sending ? (
+                  <FiRefreshCw
+                    className="motion-safe:animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <FiArrowUp size={20} aria-hidden="true" />
+                )}
+              </button>
             </div>
+            <div
+              id="chat-input-help"
+              className="mt-2 flex justify-between gap-2 text-[10px] text-slate-400"
+            >
+              <span>Enter 전송 · Shift + Enter 줄바꿈</span>
+              <span className={length > 500 ? "text-rose-500" : ""}>
+                {length} / 500
+              </span>
+            </div>
+            <p
+              id="chat-input-error"
+              role="alert"
+              className="mt-2 text-xs text-rose-600 empty:hidden"
+            >
+              {inputError ||
+                chat.sendError ||
+                (length > 500 ? "메시지는 500자까지 보낼 수 있어요." : "")}
+            </p>
+          </form>
+          {authPending && (
+            <p role="status" className="mt-2 text-xs text-slate-500">
+              로그인 상태 확인 중…
+            </p>
           )}
-          <p className="mt-3 text-center text-[10px] leading-5 text-slate-400">
-            서로의 감상을 존중해 주세요. 대화에 스포일러가 포함될 수 있어요.
-          </p>
         </footer>
       </div>
+      <Modal
+        open={authOpen}
+        onClose={closeAuth}
+        className="max-w-sm border border-[#e4dfec]"
+        ariaLabel="채팅 로그인 안내"
+      >
+        <div
+          ref={authActions}
+          className="p-6"
+          onKeyDown={(event) => {
+            if (event.key !== "Tab") return;
+            const actions = event.currentTarget.querySelectorAll<HTMLElement>(
+              "button:not(:disabled), a[href]",
+            );
+            const first = actions[0];
+            const last = actions[actions.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last?.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first?.focus();
+            }
+          }}
+        >
+          <h3 className="mb-3 text-lg font-bold text-slate-900">
+            채팅 참여 안내
+          </h3>
+          {authNotice || (
+            <p className="text-sm text-slate-600">
+              {userId
+                ? "로그인 상태를 확인했어요. 다시 메시지를 보내주세요."
+                : "로그인해 주세요."}
+            </p>
+          )}
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              type="button"
+              ref={closeAuthButton}
+              onClick={closeAuth}
+              className="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 focus-visible:ring-2 focus-visible:ring-violet-400"
+            >
+              닫기
+            </button>
+            {!authNotice && !userId && (
+              <Link
+                to={loginUrl}
+                className="rounded-xl bg-[#8661b5] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#73509f] focus-visible:ring-2 focus-visible:ring-violet-400"
+              >
+                로그인 / 회원가입하러 가기
+              </Link>
+            )}
+          </div>
+        </div>
+      </Modal>
     </section>
   );
 }
@@ -477,10 +552,9 @@ export function ContentChat({
   title?: string;
 }) {
   const queryClient = useQueryClient();
-  const [showAuthError, setShowAuthError] = useState(false);
   const user = useQuery({
-    queryKey: ["user", "me"],
-    queryFn: async () => (await verifyChatIdentity()).user,
+    queryKey: ["user", "me", "chat"],
+    queryFn: async () => (await verifyChatIdentity()).user ?? null,
     retry: false,
     staleTime: 0,
     refetchOnWindowFocus: "always",
@@ -498,23 +572,14 @@ export function ContentChat({
       role="status"
       className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-800"
     >
-      {showAuthError && (
-        <p>로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.</p>
-      )}
+      <p>로그인 상태를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.</p>
       <button
         type="button"
         disabled={user.isFetching}
-        onClick={() => {
-          setShowAuthError(true);
-          void user.refetch();
-        }}
+        onClick={() => void user.refetch()}
         className="mt-3 font-bold underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-amber-500 disabled:opacity-50"
       >
-        {user.isFetching
-          ? "확인 중…"
-          : showAuthError
-            ? "로그인 상태 다시 확인"
-            : "채팅 참여하기"}
+        {user.isFetching ? "확인 중…" : "로그인 상태 다시 확인"}
       </button>
     </div>
   ) : undefined;
@@ -525,11 +590,14 @@ export function ContentChat({
       title={title}
       userId={userId}
       authNotice={authNotice}
+      authPending={user.isPending}
       verifyUser={async () => {
         try {
           const result = await verifyChatIdentity();
-          queryClient.setQueryData(["user", "me"], result.user);
-          return { userId: result.user.userId, refreshed: result.refreshed };
+          queryClient.setQueryData(["user", "me", "chat"], result.user ?? null);
+          if (result.user)
+            queryClient.setQueryData(["user", "me"], result.user);
+          return { userId: result.user?.userId, refreshed: result.refreshed };
         } catch (error) {
           void user.refetch();
           throw error;

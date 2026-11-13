@@ -12,7 +12,7 @@ import type {
 const CONTENT_TABS = [
   { id: "info", label: "작품 정보" },
   { id: "credits", label: "출연진" },
-  { id: "episode", label: "에피소드/장면" },
+  { id: "episode", label: "에피소드" },
   { id: "review", label: "리뷰" },
 ] as const;
 
