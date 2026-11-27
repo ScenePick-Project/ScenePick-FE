@@ -1,4 +1,5 @@
 import { Button } from "@components/ui/Button.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface SettingsMenuModalProps {
   onClose: () => void;
@@ -9,6 +10,7 @@ export const SettingsMenuModal = ({
   onClose,
   onLogout,
 }: SettingsMenuModalProps) => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col">
       {/* 모달 헤더 */}
@@ -41,6 +43,10 @@ export const SettingsMenuModal = ({
       {/* 메뉴 리스트 */}
       <div className="flex flex-col py-2">
         <Button
+          onClick={() => {
+            onClose();
+            navigate("/settings/account");
+          }}
           variant={"ghost"}
           className="text-left px-5 py-4 text-gray-700 hover:bg-gray-50 transition-colors"
         >
