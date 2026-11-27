@@ -10,6 +10,7 @@ import OAuthCallback from "@pages/auth/OAuthCallback.tsx";
 import MyPage from "@pages/mypage/MyPage.tsx";
 import MyCollectionPage from "@pages/mypage/MyCollectionPage.tsx";
 import MomentPage from "@pages/moment/MomentPage.tsx";
+import AccountSettingsPage from "@pages/settings/AccountSettingsPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -33,6 +34,7 @@ export default function AppRouter() {
 
           {/* 로그인이 필요한 페이지 */}
           <Route element={<RequireAuth />}>
+            <Route path="/settings/account" element={<AccountSettingsPage />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route
               path="/mypage/reviews"

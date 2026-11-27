@@ -42,14 +42,18 @@ const userSignupForm = () => {
       window.location.href = redirectUrl
         ? decodeURIComponent(redirectUrl)
         : "/";
-    } catch (error) {
-      console.error(error);
+    } catch {
       alert("아이디 또는 비밀번호를 확인해주세요.");
     }
   };
 
   return (
     <>
+      {searchParams.get("passwordChanged") === "1" && (
+        <p role="status" className="mb-4 text-sm text-green-700">
+          비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.
+        </p>
+      )}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-sm mx-auto space-y-4"

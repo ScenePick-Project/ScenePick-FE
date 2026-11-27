@@ -8,6 +8,17 @@ import type {
 } from "@features/user/types/userType.ts";
 import { request } from "@shared/request.ts";
 
+export const changePassword = (dto: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  return request<void>({
+    method: "PATCH",
+    url: "/user/password",
+    body: dto,
+  });
+};
+
 /**
  * 회원가입을 합니다.
  * @param UserSignUpRequestDto 회원가입 정보
@@ -60,10 +71,6 @@ export const login = async (
     url: "/user/login",
     body: dto,
   });
-
-  if (response && response.accessToken) {
-    window.location.href = "/";
-  }
 
   return response;
 };
